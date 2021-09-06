@@ -1,14 +1,12 @@
 import pygame.display
 from Game.constants import *
 
-
 def getRowColFromPos(pos):
     row, col = pos
     if BoardStartX + padding < row < BoardStartX + padding + 8 * SquareDimen:
         if padding < col < HEIGHT - padding - 1:
             return min((row - BoardStartX - padding) // SquareDimen, 7), min((col - padding) // SquareDimen, 7)
     return -1, -1
-
 
 class UI:
     def __init__(self, win, chessBoard):
@@ -138,12 +136,7 @@ class UI:
                       RatingFC, RatingBC, font=gameFontBold)
 
     def drawTurn(self):
-        # print("FIX NEEDED : drawTurn")
-        self.drawPlayer1(turn=True)
-        self.drawPlayer2()
-        return
-
-        if self.board.turn:
+        if self.chessBoard.turn:
             self.drawPlayer1(turn=True)
             self.drawPlayer2()
         else:
@@ -151,26 +144,24 @@ class UI:
             self.drawPlayer2(turn=True)
 
     def isGameEnd(self):
-        # print("FIX NEEDED : isGameEnd")
-        return
-        if self.board.is_check() and not self.board.is_checkmate():
-            if self.board.turn:
+        if self.chessBoard.is_check() and not self.chessBoard.is_checkmate():
+            if self.chessBoard.turn:
                 print("White checked")
             else:
                 print("Black checked")
             return False
 
-        elif self.board.is_checkmate():
-            if self.board.turn:
+        elif self.chessBoard.is_checkmate():
+            if self.chessBoard.turn:
                 print("Checkmate : Black Won.")
             else:
                 print("Checkmate : White Won.")
 
-        elif self.board.can_claim_threefold_repetition():
+        elif self.chessBoard.draw_by_threefold_repetition():
             print("Draw by three fold Repetition.")
-        elif self.board.is_insufficient_material():
+        elif self.chessBoard.draw_by_insufficient_material():
             print("Draw by insufficient material.")
-        elif self.board.is_stalemate():
+        elif self.chessBoard.draw_by_stalemate():
             print("Draw by stalemate.")
         else:
             return False
@@ -180,8 +171,10 @@ class UI:
         pygame.draw.rect(self.win, BorderColor, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
         # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
         yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
-        self.drawText(P2Adv, 18, EvalBarStartX + EvalBarLenX // 2, padding + 9, BoardDark, centre=True)
-        self.drawText(P1Adv, 18, EvalBarStartX + EvalBarLenX // 2, HEIGHT - padding - 9, BoardLight, centre=True)
+        self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
+                      padding + 9, BoardDark, centre=True)
+        self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
+                      HEIGHT - padding - 9, BoardLight, centre=True)
 
         DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
         pygame.draw.rect(self.win, BoardDark, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
@@ -197,8 +190,6 @@ class UI:
         pos = getRowColFromPos(pos)
         if pos != (-1, -1):
             row, col = pos
-            row = abs(7-row)
-            col = abs(7-col)
 
     def drawText(self, text, size, txtX, txtY, color, colorBg=None, font=gameFont, centre=False):
         Txt = pygame.font.Font(font, size).render(text, True, color, colorBg)

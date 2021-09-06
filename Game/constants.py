@@ -47,7 +47,6 @@ P1StartX = 0
 P1StartY = HEIGHT * 0.7
 P1LenX = MenuLenX
 P1LenY = HEIGHT * 0.15
-P1Adv = "0.00"
 
 P2Name = "Carleson Magnus"
 P2Rating = " GM "
@@ -55,12 +54,13 @@ P2StartX = 0
 P2StartY = HEIGHT * 0.85
 P2LenX = MenuLenX
 P2LenY = HEIGHT * 0.16
-P2Adv = "-0.00"
 
 RatingFC = (255, 255, 255)
 RatingBC = (255, 0, 0)
 
 coordinates = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+letters = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8}
+
 SquareDimen = int((HEIGHT - 2 * padding) / 8)
 
 PieceDimen = int(SquareDimen * 0.95)

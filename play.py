@@ -27,15 +27,7 @@ def start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 displayUI.click(pos)
-
-        displayUI.updateBoard()
-        displayUI.chessBoard.print_board()
-        time.sleep(3)
-        displayUI.chessBoard.move('O-O-O')
-        displayUI.chessBoard.print_board()
-        displayUI.updateBoard()
-        time.sleep(3)
-        break
+        print(displayUI.chessBoard.get_all_valid_moves())
         if displayUI.isGameEnd():
             running = False
     pygame.quit()
