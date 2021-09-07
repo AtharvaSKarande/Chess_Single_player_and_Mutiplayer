@@ -190,6 +190,8 @@ class UI:
         pos = getRowColFromPos(pos)
         if pos != (-1, -1):
             row, col = pos
+            col = abs(7-pos[1])
+            print(col,row)
 
     def drawText(self, text, size, txtX, txtY, color, colorBg=None, font=gameFont, centre=False):
         Txt = pygame.font.Font(font, size).render(text, True, color, colorBg)
