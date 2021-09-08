@@ -1,8 +1,9 @@
 from Game.constants import CHESS_WHITE
 
 class Rook:
+    Points = 5
+
     def __init__(self, row, col, color):
-        self.points = 5
         self.row = row
         self.col = col
         self.color = color

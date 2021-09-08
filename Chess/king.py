@@ -1,8 +1,10 @@
 from Game.constants import CHESS_WHITE
 
+
 class King:
+    Points = 0
+
     def __init__(self, row, col, color):
-        self.points = 0
         self.row = row
         self.col = col
         self.color = color

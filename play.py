@@ -16,7 +16,7 @@ def start():
     # SRrecog = SpeechRecogniser()
     MOVES = ['P_f2_f4', 'P_g7_g5', 'P_f4_g5xP', 'P_f7_f5', 'P_g5_f6xP', 'B_f8_g7', 'P_f6_g7xB', 'K_e8_f7',
              'P_g7_h8xR=Q', 'P_a7_a5', 'N_g1_h3', 'R_a8_a6', 'P_g2_g4', 'N_b8_c6', 'B_f1_g2', 'N_c6_d4', 'O-O']
-
+    cnt = 0
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -34,8 +34,7 @@ def start():
         #       it will crash later as moves and board will not remain in sync.)
         # * 2 -> play next move (available when you have used at least one previous move).
         # * any other -> Moves back.
-        """
-
+        
         t = input()
         if t == '1':
             if MOVES:
@@ -47,8 +46,19 @@ def start():
             move = None
             displayUI.chessBoard.move(move, debug=True)
         else:
+            displayUI.chessBoard.move_back()"""
+        t = input()
+        if MOVES:
+            move = MOVES.pop(0)
+            displayUI.chessBoard.move(move, debug=True)
+            print(displayUI.chessBoard.get_white_score())
+            cnt += 1
+        elif cnt:
+            cnt -= 1
             displayUI.chessBoard.move_back()
-
+            print(displayUI.chessBoard.get_white_score())
+        else:
+            break
         # displayUI.chessBoard.move(move, debug=True)
         displayUI.updateBoard()
         if displayUI.isGameEnd():

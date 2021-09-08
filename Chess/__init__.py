@@ -60,7 +60,7 @@ class chessBoard:
         self.black_queens = 1
         self.black_kings = 1
 
-        self.en_passants = []
+        self.en_passants = {}
 
         # Winning percentage of white
         self.win_percent = 50
@@ -82,12 +82,10 @@ class chessBoard:
         for i in self.pieces[::-1]:
             for j in i:
                 if j != '.':
-                    print(j.role, j.row, j.col, end=" ")
+                    print(j.role, end=" ")
                 else:
                     print('.', end=' ')
             print()
-
-    """ NEED FIXES FOR EN-PASSANTS & ROOK, KING who might get original position (moved=False) during move_back """
 
     def move(self, move=None, debug=False):
         # 'P_e4_e5' - Pawn from e4 to e5.
@@ -104,6 +102,8 @@ class chessBoard:
             except IndexError:
                 print("No previous moves. Please give a new move.")
                 return
+        else:
+            self.poppedMoveList.clear()
 
         if not debug:
             if self.turn:
@@ -247,6 +247,7 @@ class chessBoard:
                     self.piecesMoved['K'] = self.moveCount
                 elif oldPos == (7, 4) and self.piecesMoved['k'] == -1:
                     self.piecesMoved['k'] = self.moveCount
+
             elif move[0] == 'R':
                 if oldPos == (0, 0) and self.piecesMoved['LR'] == -1:
                     self.piecesMoved['LR'] = self.moveCount
@@ -256,6 +257,11 @@ class chessBoard:
                     self.piecesMoved['lr'] = self.moveCount
                 elif oldPos == (7, 7) and self.piecesMoved['rr'] == -1:
                     self.piecesMoved['rr'] = self.moveCount
+
+            elif move[0] == 'P':
+                # En-passant
+                if abs(oldPos[0] - newPos[0]) == 2 and oldPos[1] == newPos[1]:
+                    self.en_passants[self.moveCount] = (oldPos[0], abs(oldPos[1] - newPos[1]))
 
             if self.turn:
                 if 'x' in move:
@@ -296,14 +302,10 @@ class chessBoard:
                         if move[0] == 'P' and oldPos[0] == 3 and newPos[0] == 2 and abs(oldPos[1] - newPos[1]) == 1:
                             self.pieces[oldPos[0]][newPos[1]] = '.'
 
-        # self.en_passants.clear()
         self.moveCount += 1
         self.change_turn()
         self.moveList.append(move)
-        self.poppedMoveList.clear()
         self.evaluate_advantage()
-
-    """ UNDER CONSTRUCTION """
 
     def move_back(self):
         # 'P_e4_e5' - Pawn from e4 to e5.
@@ -451,7 +453,29 @@ class chessBoard:
             self.pieces[oldPos[0]][oldPos[1]].row = oldPos[0]
             self.pieces[oldPos[0]][oldPos[1]].col = oldPos[1]
 
-            if not self.turn:   # Black's turn
+            # Setting king and rooks when ever they moved first time.
+            if move[0] == 'K':
+                if oldPos == (0, 4) and self.piecesMoved['K'] == self.moveCount:
+                    self.piecesMoved['K'] = -1
+                elif oldPos == (7, 4) and self.piecesMoved['k'] == self.moveCount:
+                    self.piecesMoved['k'] = -1
+
+            elif move[0] == 'R':
+                if oldPos == (0, 0) and self.piecesMoved['LR'] == self.moveCount:
+                    self.piecesMoved['LR'] = -1
+                elif oldPos == (0, 7) and self.piecesMoved['RR'] == self.moveCount:
+                    self.piecesMoved['RR'] = -1
+                if oldPos == (7, 0) and self.piecesMoved['lr'] == self.moveCount:
+                    self.piecesMoved['lr'] = -1
+                elif oldPos == (7, 7) and self.piecesMoved['rr'] == self.moveCount:
+                    self.piecesMoved['rr'] = -1
+
+            elif move[0] == 'P':
+                # En-passant
+                if abs(oldPos[0] - newPos[0]) == 2 and oldPos[1] == newPos[1]:
+                    self.en_passants.pop(self.moveCount)
+
+            if not self.turn:  # Black's turn
                 if 'x' in move:
                     capturedPiece = move[1 + move.find('x')]
                     if capturedPiece == 'B':
@@ -477,7 +501,7 @@ class chessBoard:
                             self.pieces[newPos[0]][newPos[1]] = Pawn(newPos[0], newPos[1], CHESS_BLACK)
                         self.black_pawns += 1
 
-            else:   # White's move
+            else:  # White's move
                 if 'x' in move:
                     capturedPiece = move[1 + move.find('x')]
                     if capturedPiece == 'B':
@@ -569,13 +593,26 @@ class chessBoard:
         for row in self.pieces:
             for piece in row:
                 if piece != '.' and piece.color == color:
-                    validMoves.append(piece.getValidMoves())
+                    if piece.role in ['P', 'p']:
+                        validMoves.append(piece.getValidMoves(self.en_passants))
+                    else:
+                        validMoves.append(piece.getValidMoves())
         return validMoves
 
     """ NOT IMPLEMENTED """
 
     def evaluate_advantage(self):
         pass
+
+    def get_white_score(self):
+        whiteScore = self.white_pawns * Pawn.Points + self.white_dark_bishops * Bishop.Points + \
+                 self.white_light_bishops * Bishop.Points + self.white_knights * Knight.Points + \
+                 self.white_rooks * Rook.Points + self.white_queens * Queen.Points + self.white_kings * King.Points
+
+        blackScore = self.black_pawns * Pawn.Points + self.black_dark_bishops * Bishop.Points + \
+                 self.black_light_bishops * Bishop.Points + self.black_knights * Knight.Points + \
+                 self.black_rooks * Rook.Points + self.black_queens * Queen.Points + self.black_kings * King.Points
+        return whiteScore - blackScore
 
     def draw_by_stalemate(self):
         if not self.get_all_valid_moves():

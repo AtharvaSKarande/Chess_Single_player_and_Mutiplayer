@@ -1,8 +1,9 @@
 from Game.constants import CHESS_WHITE
 
 class Pawn:
+    Points = 1
+
     def __init__(self, row, col, color):
-        self.points = 1
         self.row = row
         self.col = col
         self.color = color
@@ -12,6 +13,6 @@ class Pawn:
         else:
             self.role = 'p'
 
-    def getValidMoves(self):
+    def getValidMoves(self, en_passants):
         # Returns list of valid moves.
         pass
