@@ -26,6 +26,7 @@ BoardLen = HEIGHT
 
 BorderColor = (50, 50, 50)
 CheckColor = (255, 0, 0)
+promotionColor = (100, 100, 255)
 
 EvalBarStartX = BoardStartX + BoardLen - padding
 EvalBarStartY = 0

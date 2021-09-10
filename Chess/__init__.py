@@ -1,10 +1,11 @@
-from Game.constants import CHESS_WHITE, CHESS_BLACK, letters
+from Game.constants import CHESS_WHITE, CHESS_BLACK
 from .bishop import Bishop
 from .pawn import Pawn
 from .king import King
 from .rook import Rook
 from .queen import Queen
 from .knight import Knight
+from .static import get_row_col, validate_and_piece_exist, validate_rc
 
 
 class chessBoard:
@@ -61,6 +62,7 @@ class chessBoard:
         self.black_kings = 1
 
         self.en_passants = {}
+        # Stores column of possible en-passant with the move associated with it.
 
         # Winning percentage of white
         self.win_percent = 50
@@ -160,8 +162,8 @@ class chessBoard:
                 self.castle_rights.remove('q')
 
         elif move[-2] == '=':
-            newPos = (int(move[6]) - 1, letters[move[5]] - 1)
-            oldPos = (int(move[3]) - 1, letters[move[2]] - 1)
+            newPos = get_row_col(move[5:7])
+            oldPos = get_row_col(move[2:4])
             self.pieces[oldPos[0]][oldPos[1]] = '.'
 
             if self.turn:
@@ -233,8 +235,8 @@ class chessBoard:
                     self.pieces[newPos[0]][newPos[1]] = Rook(newPos[0], newPos[1], CHESS_BLACK)
 
         else:
-            newPos = (int(move[6]) - 1, letters[move[5]] - 1)
-            oldPos = (int(move[3]) - 1, letters[move[2]] - 1)
+            newPos = get_row_col(move[5:7])
+            oldPos = get_row_col(move[2:4])
 
             self.pieces[newPos[0]][newPos[1]], self.pieces[oldPos[0]][oldPos[1]] = \
                 self.pieces[oldPos[0]][oldPos[1]], '.'
@@ -261,7 +263,7 @@ class chessBoard:
             elif move[0] == 'P':
                 # En-passant
                 if abs(oldPos[0] - newPos[0]) == 2 and oldPos[1] == newPos[1]:
-                    self.en_passants[self.moveCount] = (oldPos[0], abs(oldPos[1] - newPos[1]))
+                    self.en_passants[self.moveCount] = oldPos[1]
 
             if self.turn:
                 if 'x' in move:
@@ -370,11 +372,12 @@ class chessBoard:
                 self.castle_rights.append('q')
 
         elif move[-2] == '=':
-            newPos = (int(move[6]) - 1, letters[move[5]] - 1)
-            oldPos = (int(move[3]) - 1, letters[move[2]] - 1)
+            newPos = get_row_col(move[5:7])
+            oldPos = get_row_col(move[2:4])
             self.pieces[oldPos[0]][oldPos[1]] = '.'
 
             if not self.turn:  # Black's turn
+                # noinspection PyTypeChecker
                 self.pieces[oldPos[0]][oldPos[1]] = Pawn(oldPos[0], oldPos[1], CHESS_WHITE)
                 self.white_pawns += 1
 
@@ -410,6 +413,7 @@ class chessBoard:
                     self.white_rooks -= 1
 
             else:  # White's turn
+                # noinspection PyTypeChecker
                 self.pieces[oldPos[0]][oldPos[1]] = Pawn(oldPos[0], oldPos[1], CHESS_BLACK)
                 self.black_pawns += 1
 
@@ -445,8 +449,8 @@ class chessBoard:
                     self.black_rooks -= 1
 
         else:
-            newPos = (int(move[6]) - 1, letters[move[5]] - 1)
-            oldPos = (int(move[3]) - 1, letters[move[2]] - 1)
+            newPos = get_row_col(move[5:7])
+            oldPos = get_row_col(move[2:4])
 
             self.pieces[oldPos[0]][oldPos[1]], self.pieces[newPos[0]][newPos[1]] = \
                 self.pieces[newPos[0]][newPos[1]], '.'
@@ -496,8 +500,10 @@ class chessBoard:
                     elif capturedPiece == 'P':
                         # if En-passant
                         if move[0] == 'P' and oldPos[0] == 4 and newPos[0] == 5 and abs(oldPos[1] - newPos[1]) == 1:
+                            # noinspection PyTypeChecker
                             self.pieces[oldPos[0]][newPos[1]] = Pawn(oldPos[0], newPos[1], CHESS_BLACK)
                         else:
+                            # noinspection PyTypeChecker
                             self.pieces[newPos[0]][newPos[1]] = Pawn(newPos[0], newPos[1], CHESS_BLACK)
                         self.black_pawns += 1
 
@@ -522,8 +528,10 @@ class chessBoard:
                     elif capturedPiece == 'P':
                         # if En-passant
                         if move[0] == 'P' and oldPos[0] == 3 and newPos[0] == 2 and abs(oldPos[1] - newPos[1]) == 1:
+                            # noinspection PyTypeChecker
                             self.pieces[oldPos[0]][newPos[1]] = Pawn(oldPos[0], newPos[1], CHESS_WHITE)
                         else:
+                            # noinspection PyTypeChecker
                             self.pieces[newPos[0]][newPos[1]] = Pawn(newPos[0], newPos[1], CHESS_WHITE)
                         self.white_pawns += 1
 
@@ -532,15 +540,143 @@ class chessBoard:
         self.poppedMoveList.append(move)
         self.evaluate_advantage()
 
-    """ NOT IMPLEMENTED """
+    """ UNDER CONSTRUCTION """
 
     def is_check(self, row=None, col=None):
-        pass
+        if row is None:
+            if self.turn:
+                row = self.WhiteKing.row
+                col = self.WhiteKing.col
+            else:
+                row = self.BlackKing.row
+                col = self.BlackKing.col
 
-    """ NOT IMPLEMENTED """
+        myColor = CHESS_BLACK
+        oppColor = CHESS_WHITE
+        if self.turn:
+            myColor = CHESS_WHITE
+            oppColor = CHESS_BLACK
+
+        # Pawn attacks
+        if myColor == CHESS_WHITE:
+            if validate_and_piece_exist(self.pieces, row + 1, col + 1) and \
+                    self.pieces[row + 1][col + 1].color == oppColor:
+                return True
+            if validate_and_piece_exist(self.pieces, row + 1, col - 1) and \
+                    self.pieces[row + 1][col - 1].color == oppColor:
+                return True
+        else:
+            if validate_and_piece_exist(self.pieces, row - 1, col + 1) and \
+                    self.pieces[row - 1][col + 1].color == oppColor:
+                return True
+            if validate_and_piece_exist(self.pieces, row - 1, col - 1) and \
+                    self.pieces[row - 1][col - 1].color == oppColor:
+                return True
+
+        # Rook and horizontal queen attacks
+        # North
+        r, c = row + 1, col
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
+                    return True
+                break
+            r += 1
+
+        # East
+        r, c = row, col + 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
+                    return True
+                break
+            c += 1
+
+        # South
+        r, c = row - 1, col
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
+                    return True
+                break
+            r -= 1
+
+        # North
+        r, c = row, col - 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
+                    return True
+                break
+            c -= 1
+
+        # Bishop and diagonal queen attacks
+        # North - East
+        r, c = row + 1, col + 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
+                    return True
+                break
+            r += 1
+            c += 1
+
+        # South - East
+        r, c = row - 1, col + 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
+                    return True
+                break
+            r -= 1
+            c += 1
+
+        # South - West
+        r, c = row - 1, col - 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
+                    return True
+                break
+            r -= 1
+            c -= 1
+
+        # North - West
+        r, c = row + 1, col - 1
+        while validate_rc(r, c):
+            piece = self.pieces[r][c]
+            if piece != '.':
+                if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
+                    return True
+                break
+            r += 1
+            c -= 1
+
+        # Knight attacks
+        for r, c in [(row+2, col+1), (row+1, col+2), (row-2, col+1), (row-1, col+2), (row+2, col-1), (row+1, col-2),
+                     (row-2, col-1), (row-1, col-2)]:
+            if validate_rc(r, c):
+                piece = self.pieces[r][c]
+                if piece != '.' and piece.color == oppColor and piece.role in ['N', 'n']:
+                    return True
+
+        return False
 
     def is_checkmate(self):
-        pass
+        if self.turn:
+            if self.is_check(self.WhiteKing.row, self.WhiteKing.col) and not self.get_all_valid_moves():
+                return True
+        else:
+            if self.is_check(self.BlackKing.row, self.BlackKing.col) and not self.get_all_valid_moves():
+                return True
+        return False
 
     def draw_by_insufficient_material(self):
         white_bishops = self.white_dark_bishops + self.white_light_bishops
@@ -593,26 +729,42 @@ class chessBoard:
         for row in self.pieces:
             for piece in row:
                 if piece != '.' and piece.color == color:
-                    if piece.role in ['P', 'p']:
-                        validMoves.append(piece.getValidMoves(self.en_passants))
+                    if piece.role in ['P', 'p'] and (self.moveCount - 1) in self.en_passants.keys():
+                        # noinspection PyArgumentList
+                        validMoves.extend(piece.getValidMoves(self.pieces, self.en_passants[self.moveCount - 1]))
                     else:
-                        validMoves.append(piece.getValidMoves())
+                        validMoves.extend(piece.getValidMoves(self.pieces))
         return validMoves
 
-    """ NOT IMPLEMENTED """
+    """ Not Implemented Fully"""
 
     def evaluate_advantage(self):
-        pass
+        wScore, bScore = self.get_score()
+        self.p1_adv = str(wScore - bScore)
+        self.p2_adv = str(bScore - wScore)
+        self.win_percent = 50 + (wScore - bScore) * 2
 
-    def get_white_score(self):
-        whiteScore = self.white_pawns * Pawn.Points + self.white_dark_bishops * Bishop.Points + \
-                 self.white_light_bishops * Bishop.Points + self.white_knights * Knight.Points + \
-                 self.white_rooks * Rook.Points + self.white_queens * Queen.Points + self.white_kings * King.Points
+    def get_score(self):
+        whiteScore = 0
+        blackScore = 0
 
-        blackScore = self.black_pawns * Pawn.Points + self.black_dark_bishops * Bishop.Points + \
-                 self.black_light_bishops * Bishop.Points + self.black_knights * Knight.Points + \
-                 self.black_rooks * Rook.Points + self.black_queens * Queen.Points + self.black_kings * King.Points
-        return whiteScore - blackScore
+        whiteScore += self.white_pawns * Pawn.Points
+        whiteScore += self.white_dark_bishops * Bishop.Points
+        whiteScore += self.white_light_bishops * Bishop.Points
+        whiteScore += self.white_knights * Knight.Points
+        whiteScore += self.white_rooks * Rook.Points
+        whiteScore += self.white_queens * Queen.Points
+        whiteScore += self.white_kings * King.Points
+
+        blackScore += self.black_pawns * Pawn.Points
+        blackScore += self.black_dark_bishops * Bishop.Points
+        blackScore += self.black_light_bishops * Bishop.Points
+        blackScore += self.black_knights * Knight.Points
+        blackScore += self.black_rooks * Rook.Points
+        blackScore += self.black_queens * Queen.Points
+        blackScore += self.black_kings * King.Points
+
+        return whiteScore, blackScore
 
     def draw_by_stalemate(self):
         if not self.get_all_valid_moves():

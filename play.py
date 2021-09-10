@@ -1,3 +1,5 @@
+import time
+
 import pygame
 from Game.ui import UI
 from Game.constants import WIDTH, HEIGHT, FPS
@@ -47,19 +49,18 @@ def start():
             displayUI.chessBoard.move(move, debug=True)
         else:
             displayUI.chessBoard.move_back()"""
-        t = input()
-        if MOVES:
+        """if MOVES:
             move = MOVES.pop(0)
             displayUI.chessBoard.move(move, debug=True)
-            print(displayUI.chessBoard.get_white_score())
+            # print(displayUI.chessBoard.get_white_score())
             cnt += 1
         elif cnt:
             cnt -= 1
             displayUI.chessBoard.move_back()
-            print(displayUI.chessBoard.get_white_score())
         else:
             break
-        # displayUI.chessBoard.move(move, debug=True)
+        # time.sleep(1)
+        # displayUI.chessBoard.move(move, debug=True)"""
         displayUI.updateBoard()
         if displayUI.isGameEnd():
             running = False

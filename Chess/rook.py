@@ -13,6 +13,7 @@ class Rook:
         else:
             self.role = 'r'
 
-    def getValidMoves(self):
+    def getValidMoves(self, pieces):
         # Returns list of valid moves.
-        pass
+        validMoves = []
+        return validMoves

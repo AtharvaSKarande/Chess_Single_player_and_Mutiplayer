@@ -13,6 +13,7 @@ class Bishop:
         else:
             self.role = 'b'
 
-    def getValidMoves(self):
+    def getValidMoves(self, pieces):
         # Returns list of valid moves.
-        pass
+        validMoves = []
+        return validMoves

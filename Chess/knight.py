@@ -13,6 +13,7 @@ class Knight:
         else:
             self.role = 'n'
 
-    def getValidMoves(self):
+    def getValidMoves(self, pieces):
         # Returns list of valid moves.
-        pass
+        validMoves = []
+        return validMoves

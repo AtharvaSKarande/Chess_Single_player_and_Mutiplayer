@@ -1,6 +1,5 @@
 from Game.constants import CHESS_WHITE
 
-
 class King:
     Points = 0
 
@@ -14,6 +13,7 @@ class King:
         else:
             self.role = 'k'
 
-    def getValidMoves(self):
+    def getValidMoves(self, pieces):
         # Returns list of valid moves.
-        pass
+        validMoves = []
+        return validMoves

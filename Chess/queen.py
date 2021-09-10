@@ -13,6 +13,7 @@ class Queen:
         else:
             self.role = 'q'
 
-    def getValidMoves(self):
+    def getValidMoves(self, pieces):
         # Returns list of valid moves.
-        pass
+        validMoves = []
+        return validMoves
