@@ -47,14 +47,14 @@ class UI:
         self.drawPromotion()
         self.drawPlayers()
         self.drawEvalBar()
-        self.drawPreviousMoves()
+        self.drawFEN()
         pygame.display.update()
 
     def drawMenu(self):
         pass
 
     def drawCoordinates(self):
-        font = pygame.font.Font(gameFontBold, 18)
+        font = pygame.font.Font(gameFontBold, 20)
         for number in coordinates.keys():
             if number % 2:
                 clr = CHESS_WHITE
@@ -63,12 +63,16 @@ class UI:
 
             text = font.render(str(coordinates[number]), True, clr)
             textRect = text.get_rect()
-            textRect.center = (BoardStartX + padding * 0.5 + number * SquareDimen, padding * 0.4 + 8 * SquareDimen)
+            X = BoardStartX + padding + number * SquareDimen - textRect.center[0] - 3
+            Y = 8 * SquareDimen + padding - textRect.center[1]
+            textRect.center = (X, Y)
             self.win.blit(text, textRect)
 
             text = font.render(str(number), True, clr)
             textRect = text.get_rect()
-            textRect.center = (BoardStartX + padding * 1.6, padding * 1.8 + (8 - number) * SquareDimen)
+            X = BoardStartX + padding + textRect.center[0] + 3
+            Y = padding + (8 - number) * SquareDimen + textRect.center[1]
+            textRect.center = (X, Y)
             self.win.blit(text, textRect)
 
     def drawPieces(self):
@@ -86,11 +90,14 @@ class UI:
         Y = checkY + (SquareDimen - PieceDimen) // 2
 
         if piece == 'TAKE':
-            pygame.draw.rect(self.win, TakeColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+            pygame.draw.circle(self.win, TakeColor, (checkX + SquareDimen//2, checkY + SquareDimen//2),
+                               SquareDimen//2, 7)
         elif piece == 'MOVE':
-            pygame.draw.rect(self.win, MoveColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+            pygame.draw.circle(self.win, MoveColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+                               10, 10)
         elif piece == 'CASTLE':
-            pygame.draw.rect(self.win, CastleColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+            pygame.draw.circle(self.win, CastleColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+                               10, 10)
         elif piece == 'SELECT':
             pygame.draw.rect(self.win, SelectColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
 
@@ -161,14 +168,7 @@ class UI:
             self.drawPlayer2(turn=True)
 
     def isGameEnd(self):
-        if self.chessBoard.is_check() and not self.chessBoard.is_checkmate():
-            if self.chessBoard.turn:
-                print("White checked")
-            else:
-                print("Black checked")
-            return False
-
-        elif self.chessBoard.is_checkmate():
+        if self.chessBoard.is_checkmate():
             if self.chessBoard.turn:
                 print("Checkmate : Black Won.")
             else:
@@ -200,8 +200,8 @@ class UI:
                          (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))"""
         pass
 
-    def drawPreviousMoves(self):
-        # pygame.draw.rect(self.win, PreviousMoveColor, (FENStartX, FENStartY, FENLenX, FENLenY))
+    def drawFEN(self):
+        # pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
         pass
 
     def click(self, pos):

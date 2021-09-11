@@ -9,39 +9,14 @@ from .static import get_row_col, is_valid_rc
 
 
 class chessBoard:
-    def __init__(self, p1Name="Player 1", p1Rating="P1", p2Name="Player 2", p2Rating="P2"):
+    def __init__(self, Board_type="STANDARD", p1Name="Player 1", p1Rating="P1", p2Name="Player 2", p2Rating="P2"):
 
-        # 7     r n b q k b n r
-        # 6     p p p p p p p p
-        # 5     . . . . . . . .
-        # 4     . . . . . . . .
-        # 3     . . . . . . . .
-        # 2     . . . . . . . .
-        # 1     P P P P P P P P
-        # 0     R N B Q K B N R
-        #
-        #       0 1 2 3 4 5 6 7
-        self.WhiteKing = King(0, 4, CHESS_WHITE)
-        self.BlackKing = King(7, 4, CHESS_BLACK)
+        self.WhiteKing = None
+        self.BlackKing = None
 
-        self.pieces = [
-            [Rook(0, 0, CHESS_WHITE), Knight(0, 1, CHESS_WHITE), Bishop(0, 2, CHESS_WHITE), Queen(0, 3, CHESS_WHITE),
-             self.WhiteKing, Bishop(0, 5, CHESS_WHITE), Knight(0, 6, CHESS_WHITE), Rook(0, 7, CHESS_WHITE)],
+        self.pieces = []
+        self.Board_type = Board_type
 
-            [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
-             Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
-
-            ['.', '.', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', '.', '.', '.', '.'],
-
-            [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
-             Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
-
-            [Rook(7, 0, CHESS_BLACK), Knight(7, 1, CHESS_BLACK), Bishop(7, 2, CHESS_BLACK), Queen(7, 3, CHESS_BLACK),
-             self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK), Rook(7, 7, CHESS_BLACK)]
-        ]
         self.turn = True
 
         # white pieces
@@ -79,6 +54,79 @@ class chessBoard:
         self.p2Name = p2Name
         self.p1Rating = p1Rating
         self.p2Rating = p2Rating
+        self.initialize_pieces()
+
+    def initialize_pieces(self):
+        if self.Board_type == 'STANDARD':
+            # 7     r n b q k b n r
+            # 6     p p p p p p p p
+            # 5     . . . . . . . .
+            # 4     . . . . . . . .
+            # 3     . . . . . . . .
+            # 2     . . . . . . . .
+            # 1     P P P P P P P P
+            # 0     R N B Q K B N R
+            #
+            #       0 1 2 3 4 5 6 7
+
+            self.WhiteKing = King(0, 4, CHESS_WHITE)
+            self.BlackKing = King(7, 4, CHESS_BLACK)
+
+            self.pieces = [
+                [Rook(0, 0, CHESS_WHITE), Knight(0, 1, CHESS_WHITE), Bishop(0, 2, CHESS_WHITE),
+                 Queen(0, 3, CHESS_WHITE), self.WhiteKing, Bishop(0, 5, CHESS_WHITE), Knight(0, 6, CHESS_WHITE),
+                 Rook(0, 7, CHESS_WHITE)],
+
+                [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
+                 Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
+
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+
+                [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
+                 Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
+
+                [Rook(7, 0, CHESS_BLACK), Knight(7, 1, CHESS_BLACK), Bishop(7, 2, CHESS_BLACK),
+                 Queen(7, 3, CHESS_BLACK), self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK),
+                 Rook(7, 7, CHESS_BLACK)]
+            ]
+        elif self.Board_type == 'STANDARD_NON_CASTLE':
+
+            self.WhiteKing = King(0, 4, CHESS_WHITE)
+            self.BlackKing = King(7, 4, CHESS_BLACK)
+
+            self.pieces = [
+                [Rook(0, 0, CHESS_WHITE), Knight(0, 1, CHESS_WHITE), Bishop(0, 2, CHESS_WHITE),
+                 Queen(0, 3, CHESS_WHITE), self.WhiteKing, Bishop(0, 5, CHESS_WHITE), Knight(0, 6, CHESS_WHITE),
+                 Rook(0, 7, CHESS_WHITE)],
+
+                [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
+                 Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
+
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+
+                [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
+                 Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
+
+                [Rook(7, 0, CHESS_BLACK), Knight(7, 1, CHESS_BLACK), Bishop(7, 2, CHESS_BLACK),
+                 Queen(7, 3, CHESS_BLACK), self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK),
+                 Rook(7, 7, CHESS_BLACK)]
+            ]
+            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
+        elif self.Board_type == 'CHESS_960':
+
+            self.WhiteKing = King(0, 4, CHESS_WHITE)
+            self.BlackKing = King(7, 4, CHESS_BLACK)
+
+            # No castling for chess_960
+            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
+        else:
+            print("INVALID BOARD TYPE.")
 
     def print_board(self):
         for i in self.pieces[::-1]:
@@ -255,7 +303,6 @@ class chessBoard:
                     self.piecesMoved['lr'] = self.moveCount
                 elif oldPos == (7, 7) and self.piecesMoved['rr'] == -1:
                     self.piecesMoved['rr'] = self.moveCount
-
             elif move[0] == 'P':
                 # En-passant
                 if abs(oldPos[0] - newPos[0]) == 2 and oldPos[1] == newPos[1]:
@@ -496,12 +543,11 @@ class chessBoard:
                         self.pieces[newPos[0]][newPos[1]] = Rook(newPos[0], newPos[1], CHESS_BLACK)
                         self.black_rooks += 1
                     elif capturedPiece == 'P':
-                        # if En-passant
-                        if move[0] == 'P' and oldPos[0] == 4 and newPos[0] == 5 and abs(oldPos[1] - newPos[1]) == 1:
-                            # noinspection PyTypeChecker
+                        # If En-Passant
+                        if oldPos[0] == 4 and self.moveCount - 1 in self.en_passants.keys() and \
+                                self.en_passants[self.moveCount - 1] == newPos[1]:
                             self.pieces[oldPos[0]][newPos[1]] = Pawn(oldPos[0], newPos[1], CHESS_BLACK)
                         else:
-                            # noinspection PyTypeChecker
                             self.pieces[newPos[0]][newPos[1]] = Pawn(newPos[0], newPos[1], CHESS_BLACK)
                         self.black_pawns += 1
 
@@ -525,11 +571,10 @@ class chessBoard:
                         self.white_rooks += 1
                     elif capturedPiece == 'P':
                         # if En-passant
-                        if move[0] == 'P' and oldPos[0] == 3 and newPos[0] == 2 and abs(oldPos[1] - newPos[1]) == 1:
-                            # noinspection PyTypeChecker
+                        if oldPos[0] == 3 and self.moveCount - 1 in self.en_passants.keys() and \
+                                self.en_passants[self.moveCount - 1] == newPos[1]:
                             self.pieces[oldPos[0]][newPos[1]] = Pawn(oldPos[0], newPos[1], CHESS_WHITE)
                         else:
-                            # noinspection PyTypeChecker
                             self.pieces[newPos[0]][newPos[1]] = Pawn(newPos[0], newPos[1], CHESS_WHITE)
                         self.white_pawns += 1
 
