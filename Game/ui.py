@@ -1,7 +1,9 @@
 import pygame.display
 
 from Chess import get_row_col
-from Game.constants import *
+from Game.values.colors import *
+from Game.values.dimens import *
+from Game.values.assets import *
 
 
 def getRowColFromPos(pos):
@@ -19,6 +21,7 @@ class UI:
         self.selectedPiece = None
         self.moveLoc = {}
         self.takesLoc = {}
+        self.castleLoc = {}
         self.promotionMove = None
 
     def drawDisplay(self):
@@ -34,9 +37,9 @@ class UI:
                 x = BoardStartX + padding + j * SquareDimen
                 y = BoardStartY + padding + i * SquareDimen
                 if (i + j) % 2:
-                    pygame.draw.rect(self.win, BoardDark, ((x, y), (SquareDimen, SquareDimen)))
+                    pygame.draw.rect(self.win, CHESS_BLACK, ((x, y), (SquareDimen, SquareDimen)))
                 else:
-                    pygame.draw.rect(self.win, BoardLight, ((x, y), (SquareDimen, SquareDimen)))
+                    pygame.draw.rect(self.win, CHESS_WHITE, ((x, y), (SquareDimen, SquareDimen)))
 
         self.drawUIMoves()
         self.drawPieces()
@@ -54,9 +57,9 @@ class UI:
         font = pygame.font.Font(gameFontBold, 18)
         for number in coordinates.keys():
             if number % 2:
-                clr = BoardLight
+                clr = CHESS_WHITE
             else:
-                clr = BoardDark
+                clr = CHESS_BLACK
 
             text = font.render(str(coordinates[number]), True, clr)
             textRect = text.get_rect()
@@ -83,11 +86,13 @@ class UI:
         Y = checkY + (SquareDimen - PieceDimen) // 2
 
         if piece == 'TAKE':
-            TakeColor = (255, 255, 255)
             pygame.draw.rect(self.win, TakeColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
         elif piece == 'MOVE':
-            MoveColor = (0, 0, 0)
             pygame.draw.rect(self.win, MoveColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+        elif piece == 'CASTLE':
+            pygame.draw.rect(self.win, CastleColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+        elif piece == 'SELECT':
+            pygame.draw.rect(self.win, SelectColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
 
         elif piece == 'P':
             self.win.blit(WHITE_PAWN, (X, Y))
@@ -124,27 +129,27 @@ class UI:
             self.win.blit(BLACK_KNIGHT, (X, Y))
 
     def drawPlayer1(self, turn=False):
-        pygame.draw.rect(self.win, BoardLight, (P1StartX, P1StartY, P1LenX, P1LenY))
+        pygame.draw.rect(self.win, CHESS_WHITE, (P1StartX, P1StartY, P1LenX, P1LenY))
         pad = int(P1LenY * 0.1)
         if turn:
             pygame.draw.rect(self.win, turnColor, (P1StartX, P1StartY, P1LenY, P1LenY))
-        pygame.draw.rect(self.win, BoardDark, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
-        self.win.blit(WHITE_PAWN, (P1StartX + pad, P1StartY + pad))
+        pygame.draw.rect(self.win, CHESS_BLACK, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
+        self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
-        self.drawText(P1Name, 24, P1StartX + 3 * pad + SquareDimen, P1StartY + pad, BoardDark)
-        self.drawText(P1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
+        self.drawText(self.chessBoard.p1Name, 24, P1StartX + 3 * pad + SquareDimen, P1StartY + pad, CHESS_BLACK)
+        self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
                       RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayer2(self, turn=False):
-        pygame.draw.rect(self.win, BoardDark, (P2StartX, P2StartY, P2LenX, P2LenY))
+        pygame.draw.rect(self.win, CHESS_BLACK, (P2StartX, P2StartY, P2LenX, P2LenY))
         pad = int(P2LenY * 0.1)
         if turn:
             pygame.draw.rect(self.win, turnColor, (P2StartX, P2StartY, P1LenY, P1LenY))
-        pygame.draw.rect(self.win, BoardLight, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
-        self.win.blit(BLACK_PAWN, (P2StartX + pad, P2StartY + pad))
+        pygame.draw.rect(self.win, CHESS_WHITE, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
+        self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
-        self.drawText(P2Name, 24, P2StartX + 3 * pad + SquareDimen, P2StartY + pad, BoardLight)
-        self.drawText(P2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
+        self.drawText(self.chessBoard.p2Name, 24, P2StartX + 3 * pad + SquareDimen, P2StartY + pad, CHESS_WHITE)
+        self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
                       RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayers(self):
@@ -180,22 +185,23 @@ class UI:
         return True
 
     def drawEvalBar(self):
+        """
         pygame.draw.rect(self.win, BorderColor, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
         # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
         yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
         self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                      padding + 9, BoardDark, centre=True)
+                      padding + 9, CHESS_BLACK, centre=True)
         self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                      HEIGHT - padding - 9, BoardLight, centre=True)
+                      HEIGHT - padding - 9, CHESS_WHITE, centre=True)
 
         DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
-        pygame.draw.rect(self.win, BoardDark, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
-        pygame.draw.rect(self.win, BoardLight,
-                         (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))
+        pygame.draw.rect(self.win, CHESS_BLACK, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
+        pygame.draw.rect(self.win, CHESS_WHITE,
+                         (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))"""
+        pass
 
     def drawPreviousMoves(self):
-        # pygame.draw.rect(self.win, PreviousMoveColor, (PreviousMoveStartX, PreviousMoveStartY,
-        # PreviousMoveLenX, PreviousMoveLenY))
+        # pygame.draw.rect(self.win, PreviousMoveColor, (FENStartX, FENStartY, FENLenX, FENLenY))
         pass
 
     def click(self, pos):
@@ -204,7 +210,6 @@ class UI:
             col, row = pos
             row = abs(7 - row)
         else:
-            self.promotionMove = None
             self.clearUIMoves()
             return
 
@@ -219,42 +224,52 @@ class UI:
                 self.chessBoard.move(self.promotionMove + 'R')
             self.clearUIMoves()
             self.updateBoard()
-            self.promotionMove = None
             return
 
         clickedPiece = self.chessBoard.pieces[row][col]
-        turn_color = CHESS_BLACK
+        my_color = CHESS_BLACK
         if self.chessBoard.turn:
-            turn_color = CHESS_WHITE
+            my_color = CHESS_WHITE
 
         # Clicked piece is empty.
         if clickedPiece == '.':
-            if (row, col) in self.moveLoc.keys():
-                self.chessBoard.move(self.moveLoc[(row, col)])
-            elif (row, col) in self.takesLoc.keys():    # En-passant is take with final position = empty.
-                self.chessBoard.move(self.takesLoc[(row, col)])
-            self.clearUIMoves()
-        # Clicked piece is of opponent's color.
-        elif clickedPiece.color != turn_color:
-            if (row, col) in self.takesLoc.keys():
-                if '=' in self.takesLoc[(row, col)]:
-                    self.promotionMove = self.takesLoc[(row, col)][:-1]
-                else:
+            if self.selectedPiece:
+                if (row, col) in self.moveLoc.keys():
+                    if '=' in self.moveLoc[(row, col)]:
+                        self.promotionMove = self.moveLoc[(row, col)][:-1]
+                        self.updateBoard()
+                        return
+                    else:
+                        self.chessBoard.move(self.moveLoc[(row, col)])
+                elif (row, col) in self.takesLoc.keys():  # En-passant is take with clicked position = empty.
                     self.chessBoard.move(self.takesLoc[(row, col)])
-            self.clearUIMoves()
-            return
+                elif (row, col) in self.castleLoc.keys():
+                    self.chessBoard.move(self.castleLoc[(row, col)])
+            else:
+                return
+
+        # Clicked piece is of opponent's color.
+        elif clickedPiece.color != my_color:
+            if self.selectedPiece:
+                if (row, col) in self.takesLoc.keys():
+                    if '=' in self.takesLoc[(row, col)]:
+                        self.promotionMove = self.takesLoc[(row, col)][:-1]
+                        self.updateBoard()
+                        return
+                    else:
+                        self.chessBoard.move(self.takesLoc[(row, col)])
+            else:
+                return
+
         # Clicked piece is of turn's color.
         else:
             if not self.selectedPiece:
                 self.setUIMoves(clickedPiece)
-                self.updateBoard()
-                return
-            elif clickedPiece != self.selectedPiece:
+            if clickedPiece != self.selectedPiece:
                 self.clearUIMoves()
                 self.setUIMoves(clickedPiece)
-                self.updateBoard()
-                return
-
+            self.updateBoard()
+            return
         self.clearUIMoves()
         self.updateBoard()
 
@@ -262,12 +277,20 @@ class UI:
         self.selectedPiece = clickedPiece
         board = self.chessBoard
         if self.selectedPiece.role in ['P', 'p'] and (board.moveCount - 1) in board.en_passants.keys():
-            moves = clickedPiece.getValidMoves(board.pieces, board.en_passants[board.moveCount - 1])
+            moves = clickedPiece.getValidMoves(board, board.en_passants[board.moveCount - 1])
         else:
-            moves = clickedPiece.getValidMoves(board.pieces)
+            moves = clickedPiece.getValidMoves(board)
         for mv in moves:
             if 'x' in mv:
                 self.takesLoc[get_row_col(mv[5:7])] = mv
+            elif '-' in mv:
+                row = 7
+                if board.turn:
+                    row = 0
+                if mv == 'O-O':
+                    self.castleLoc[(row, 6)] = mv
+                if mv == 'O-O-O':
+                    self.castleLoc[(row, 2)] = mv
             else:
                 self.moveLoc[get_row_col(mv[5:7])] = mv
 
@@ -276,17 +299,23 @@ class UI:
             self.showPiece('MOVE', move[0], move[1])
         for take in self.takesLoc.keys():
             self.showPiece('TAKE', take[0], take[1])
+        for castle in self.castleLoc.keys():
+            self.showPiece('CASTLE', castle[0], castle[1])
+        if self.selectedPiece:
+            self.showPiece('SELECT', self.selectedPiece.row, self.selectedPiece.col)
 
     def clearUIMoves(self):
+        self.promotionMove = None
         self.selectedPiece = None
         self.moveLoc.clear()
         self.takesLoc.clear()
+        self.castleLoc.clear()
 
     def drawPromotion(self):
         if self.promotionMove:
             X = BoardStartX + padding + 3 * SquareDimen
             Y = BoardStartY + padding + 3 * SquareDimen
-            pygame.draw.rect(self.win, promotionColor, (X, Y, 2*SquareDimen, 2*SquareDimen))
+            pygame.draw.rect(self.win, promotionColor, (X, Y, 2 * SquareDimen, 2 * SquareDimen))
             if self.chessBoard.turn:
                 self.showPiece('Q', 4, 3)
                 self.showPiece('R', 4, 4)

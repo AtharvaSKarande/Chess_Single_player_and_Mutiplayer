@@ -1,5 +1,5 @@
 import speech_recognition as sr
-from Game.constants import coordinates
+from Game.values.dimens import coordinates
 
 class SpeechRecogniser:
     def __init__(self):

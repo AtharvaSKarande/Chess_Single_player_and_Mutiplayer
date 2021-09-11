@@ -1,15 +1,15 @@
-from Game.constants import CHESS_WHITE, CHESS_BLACK
+from Game.values.colors import CHESS_WHITE, CHESS_BLACK
 from .bishop import Bishop
 from .pawn import Pawn
 from .king import King
 from .rook import Rook
 from .queen import Queen
 from .knight import Knight
-from .static import get_row_col, validate_and_piece_exist, validate_rc
+from .static import get_row_col, is_valid_rc
 
 
 class chessBoard:
-    def __init__(self):
+    def __init__(self, p1Name="Player 1", p1Rating="P1", p2Name="Player 2", p2Rating="P2"):
 
         # 7     r n b q k b n r
         # 6     p p p p p p p p
@@ -67,18 +67,18 @@ class chessBoard:
         # Winning percentage of white
         self.win_percent = 50
 
-        # Castling rights
-        self.castle_rights = ['K', 'Q', 'k', 'q']
-
         self.moveList = []
         self.poppedMoveList = []
         self.moveCount = 0
-        # Stores the first move where respective piece was moved.
+        # Stores the first move where respective piece was moved. (Also serves the purpose of castling rights.)
         self.piecesMoved = {'K': -1, 'LR': -1, 'RR': -1, 'k': -1, 'lr': -1, 'rr': -1}
 
         self.winner = None
-        self.p1_adv = "0.00"
-        self.p2_adv = "-0.00"
+
+        self.p1Name = p1Name
+        self.p2Name = p2Name
+        self.p1Rating = p1Rating
+        self.p2Rating = p2Rating
 
     def print_board(self):
         for i in self.pieces[::-1]:
@@ -126,7 +126,6 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['K'] = self.moveCount
                 self.piecesMoved['RR'] = self.moveCount
-                self.castle_rights.remove('K')
             else:
                 self.pieces[7][4], self.pieces[7][6] = self.pieces[7][6], self.pieces[7][4]
                 self.pieces[7][6].col = 6
@@ -136,7 +135,6 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['k'] = self.moveCount
                 self.piecesMoved['rr'] = self.moveCount
-                self.castle_rights.remove('k')
 
         elif move == 'O-O-O':
             if self.turn:
@@ -148,7 +146,6 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['K'] = self.moveCount
                 self.piecesMoved['LR'] = self.moveCount
-                self.castle_rights.remove('Q')
 
             else:
                 self.pieces[7][2], self.pieces[7][4] = self.pieces[7][4], self.pieces[7][2]
@@ -159,7 +156,6 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['k'] = self.moveCount
                 self.piecesMoved['lr'] = self.moveCount
-                self.castle_rights.remove('q')
 
         elif move[-2] == '=':
             newPos = get_row_col(move[5:7])
@@ -309,7 +305,7 @@ class chessBoard:
         self.moveList.append(move)
         self.evaluate_advantage()
 
-    def move_back(self):
+    def move_back(self, debug=False):
         # 'P_e4_e5' - Pawn from e4 to e5.
         # 'P_e5_f6' - Pawn from e5 to f6 (En-Passant).
         # 'O-O' - Short castle.
@@ -336,7 +332,6 @@ class chessBoard:
                 # Setting king and rook as not moved.
                 self.piecesMoved['K'] = -1
                 self.piecesMoved['RR'] = -1
-                self.castle_rights.append('K')
             else:
                 self.pieces[7][4], self.pieces[7][6] = self.pieces[7][6], self.pieces[7][4]
                 self.pieces[7][4].col = 4
@@ -346,7 +341,6 @@ class chessBoard:
                 # Setting king and rook as not moved.
                 self.piecesMoved['k'] = -1
                 self.piecesMoved['rr'] = -1
-                self.castle_rights.append('k')
 
         elif move == 'O-O-O':
             if not self.turn:
@@ -358,7 +352,6 @@ class chessBoard:
                 # Setting king and rook as not moved.
                 self.piecesMoved['K'] = -1
                 self.piecesMoved['LR'] = -1
-                self.castle_rights.append('Q')
 
             else:
                 self.pieces[7][2], self.pieces[7][4] = self.pieces[7][4], self.pieces[7][2]
@@ -369,7 +362,6 @@ class chessBoard:
                 # Setting king and rook as not moved.
                 self.piecesMoved['k'] = -1
                 self.piecesMoved['lr'] = -1
-                self.castle_rights.append('q')
 
         elif move[-2] == '=':
             newPos = get_row_col(move[5:7])
@@ -399,6 +391,9 @@ class chessBoard:
                         self.pieces[newPos[0]][newPos[1]] = Rook(newPos[0], newPos[1], CHESS_BLACK)
                         self.black_rooks += 1
                     # Pawns can not reside on 8th or 1st rank.
+                else:
+                    # Promoted by straight move of pawn
+                    self.pieces[newPos[0]][newPos[1]] = '.'
 
                 if move[-1] == 'B':
                     if newPos[1] % 2:
@@ -435,6 +430,9 @@ class chessBoard:
                         self.pieces[newPos[0]][newPos[1]] = Rook(newPos[0], newPos[1], CHESS_WHITE)
                         self.white_rooks += 1
                     # Pawns can not reside on 8th or 1st rank.
+                else:
+                    # Promoted by straight move of pawn
+                    self.pieces[newPos[0]][newPos[1]] = '.'
 
                 if move[-1] == 'B':
                     if newPos[1] % 2:
@@ -537,10 +535,9 @@ class chessBoard:
 
         # self.en_passants.clear()
         self.change_turn()
-        self.poppedMoveList.append(move)
+        if not debug:
+            self.poppedMoveList.append(move)
         self.evaluate_advantage()
-
-    """ UNDER CONSTRUCTION """
 
     def is_check(self, row=None, col=None):
         if row is None:
@@ -551,32 +548,28 @@ class chessBoard:
                 row = self.BlackKing.row
                 col = self.BlackKing.col
 
-        myColor = CHESS_BLACK
         oppColor = CHESS_WHITE
         if self.turn:
-            myColor = CHESS_WHITE
             oppColor = CHESS_BLACK
 
         # Pawn attacks
-        if myColor == CHESS_WHITE:
-            if validate_and_piece_exist(self.pieces, row + 1, col + 1) and \
-                    self.pieces[row + 1][col + 1].color == oppColor:
-                return True
-            if validate_and_piece_exist(self.pieces, row + 1, col - 1) and \
-                    self.pieces[row + 1][col - 1].color == oppColor:
-                return True
+        if self.turn:
+            for r, c in [(row + 1, col + 1), (row + 1, col - 1)]:
+                if is_valid_rc(r, c):
+                    piece = self.pieces[r][c]
+                    if piece != '.' and piece.color == oppColor and piece.role in ['P', 'p']:
+                        return True
         else:
-            if validate_and_piece_exist(self.pieces, row - 1, col + 1) and \
-                    self.pieces[row - 1][col + 1].color == oppColor:
-                return True
-            if validate_and_piece_exist(self.pieces, row - 1, col - 1) and \
-                    self.pieces[row - 1][col - 1].color == oppColor:
-                return True
+            for r, c in [(row - 1, col + 1), (row - 1, col - 1)]:
+                if is_valid_rc(r, c):
+                    piece = self.pieces[r][c]
+                    if piece != '.' and piece.color == oppColor and piece.role in ['P', 'p']:
+                        return True
 
         # Rook and horizontal queen attacks
         # North
         r, c = row + 1, col
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
@@ -586,7 +579,7 @@ class chessBoard:
 
         # East
         r, c = row, col + 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
@@ -596,7 +589,7 @@ class chessBoard:
 
         # South
         r, c = row - 1, col
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
@@ -604,9 +597,9 @@ class chessBoard:
                 break
             r -= 1
 
-        # North
+        # West
         r, c = row, col - 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['R', 'r', 'Q', 'q']:
@@ -617,7 +610,7 @@ class chessBoard:
         # Bishop and diagonal queen attacks
         # North - East
         r, c = row + 1, col + 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
@@ -628,7 +621,7 @@ class chessBoard:
 
         # South - East
         r, c = row - 1, col + 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
@@ -639,7 +632,7 @@ class chessBoard:
 
         # South - West
         r, c = row - 1, col - 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
@@ -650,7 +643,7 @@ class chessBoard:
 
         # North - West
         r, c = row + 1, col - 1
-        while validate_rc(r, c):
+        while is_valid_rc(r, c):
             piece = self.pieces[r][c]
             if piece != '.':
                 if piece.color == oppColor and piece.role in ['B', 'b', 'Q', 'q']:
@@ -660,11 +653,23 @@ class chessBoard:
             c -= 1
 
         # Knight attacks
-        for r, c in [(row+2, col+1), (row+1, col+2), (row-2, col+1), (row-1, col+2), (row+2, col-1), (row+1, col-2),
-                     (row-2, col-1), (row-1, col-2)]:
-            if validate_rc(r, c):
+        for r, c in [(row + 2, col + 1), (row + 1, col + 2), (row - 2, col + 1), (row - 1, col + 2), (row + 2, col - 1),
+                     (row + 1, col - 2),
+                     (row - 2, col - 1), (row - 1, col - 2)]:
+            if is_valid_rc(r, c):
                 piece = self.pieces[r][c]
                 if piece != '.' and piece.color == oppColor and piece.role in ['N', 'n']:
+                    return True
+
+        # King attacks
+        # ( Though king cannot attack opponent's king, to remove the condition where two kings will stand side by side,
+        # king's attacks are also taken into consideration.)
+        r, c = row, col
+        for rw, co in [(r + 1, c), (r + 1, c + 1), (r, c + 1), (r - 1, c + 1), (r - 1, c), (r - 1, c - 1), (r, c - 1),
+                       (r + 1, c - 1)]:
+            if is_valid_rc(rw, co):
+                piece = self.pieces[rw][co]
+                if piece != '.' and piece.color == oppColor and piece.role in ['K', 'k']:
                     return True
 
         return False
@@ -710,8 +715,6 @@ class chessBoard:
             else:
                 return False
 
-    """ NOT IMPLEMENTED """
-
     def draw_by_threefold_repetition(self):
         pass
 
@@ -731,18 +734,13 @@ class chessBoard:
                 if piece != '.' and piece.color == color:
                     if piece.role in ['P', 'p'] and (self.moveCount - 1) in self.en_passants.keys():
                         # noinspection PyArgumentList
-                        validMoves.extend(piece.getValidMoves(self.pieces, self.en_passants[self.moveCount - 1]))
+                        validMoves.extend(piece.getValidMoves(self, self.en_passants[self.moveCount - 1]))
                     else:
-                        validMoves.extend(piece.getValidMoves(self.pieces))
+                        validMoves.extend(piece.getValidMoves(self))
         return validMoves
 
-    """ Not Implemented Fully"""
-
     def evaluate_advantage(self):
-        wScore, bScore = self.get_score()
-        self.p1_adv = str(wScore - bScore)
-        self.p2_adv = str(bScore - wScore)
-        self.win_percent = 50 + (wScore - bScore) * 2
+        pass
 
     def get_score(self):
         whiteScore = 0
