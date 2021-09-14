@@ -25,9 +25,11 @@ class Pawn:
             direction = 1
 
         # If pawn is not moved, play 2 moves if possible
-        if direction == 1 and self.row == 1 and pieces[self.row + 2][self.col] == '.':
+        if direction == 1 and self.row == 1 and pieces[self.row + 1][self.col] == '.' and \
+                pieces[self.row + 2][self.col] == '.':
             allMoves.append(mv + get_board_co_ord(self.row + 2, self.col))
-        elif direction == -1 and self.row == 6 and pieces[self.row - 2][self.col] == '.':
+        elif direction == -1 and self.row == 6 and pieces[self.row - 1][self.col] == '.' and \
+                pieces[self.row - 2][self.col] == '.':
             allMoves.append(mv + get_board_co_ord(self.row - 2, self.col))
 
         # En-passants
