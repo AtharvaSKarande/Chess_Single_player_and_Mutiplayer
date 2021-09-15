@@ -2,7 +2,7 @@ import pygame
 
 import Chess
 from Game.ui import UI
-from Game.values.dimens import WIDTH, HEIGHT
+from Game.values.dimens import WIDTH, HEIGHT, TitleLenX
 
 FPS = 60
 win = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
@@ -26,7 +26,10 @@ def start():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                displayUI.click(pos)
+                if pos[0] < TitleLenX:
+                    displayUI.menuClick(pos)
+                else:
+                    displayUI.click(pos)
         # print(displayUI.chessBoard.en_passants)
         if displayUI.isGameEnd():
             running = False

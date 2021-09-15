@@ -151,8 +151,8 @@ class chessBoard:
                 move = self.poppedMoveList.pop(-1)
             except IndexError:
                 print("No previous moves. Please give a new move.")
-                return
-        else:
+                return False
+        elif not debug:
             self.poppedMoveList.clear()
 
         if not debug:
@@ -351,6 +351,7 @@ class chessBoard:
         self.change_turn()
         self.moveList.append(move)
         self.evaluate_advantage()
+        return True
 
     def move_back(self, debug=False):
         # 'P_e4_e5' - Pawn from e4 to e5.
@@ -365,7 +366,7 @@ class chessBoard:
             move = self.moveList.pop(-1)
         except IndexError:
             print("No more moves left.")
-            return
+            return False
 
         self.moveCount -= 1
 
@@ -583,6 +584,7 @@ class chessBoard:
         if not debug:
             self.poppedMoveList.append(move)
         self.evaluate_advantage()
+        return True
 
     def is_check(self, row=None, col=None):
         if row is None:

@@ -60,14 +60,15 @@ class UI:
 
         # Buttons
         for buttonTxt in ['Save Game', 'Settings', 'Continue with bot', 'Request Draw', 'Resign']:
-            pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 12)
+            pygame.draw.rect(self.win, MenuBtnColor, ((MenuStartX + MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)
+                                                      ), 0, 12)
             self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
             txtY += MenuBtnHeight + padding
 
         # Placing Quit button at end.
         txtY = MenuStartY + MenuLenY - padding - MenuBtnHeight
         pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 12)
-        self.drawText('Save and Quit', MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
+        self.drawText('Quit', MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
         txtY += MenuBtnHeight + padding
 
     def drawCoordinates(self):
@@ -220,6 +221,54 @@ class UI:
     def drawFEN(self):
         # pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
         pass
+
+    def menuClick(self, pos):
+        row, col = pos
+        if MenuStartX < row < MenuStartX + MenuLenX and MenuStartY < col < MenuStartY + MenuLenY:
+            centre = MenuStartX + MenuLenX // 2
+
+            # Backward and forward move
+            if 0 < col - MenuStartY - padding < ArrowBtnLenY:
+                if centre - padding - ArrowBtnLenX < row < centre - padding:
+                    success = self.chessBoard.move_back()
+                    if not success:
+                        print("Error")
+                    self.updateBoard()
+
+                elif 0 < row - centre - padding < ArrowBtnLenX:
+                    success = self.chessBoard.move()
+                    if not success:
+                        print("Error")
+                    self.updateBoard()
+
+            Y = MenuStartY + padding * 3 + MenuBtnHeight
+            if 0 < row - MenuStartX - MenuBtnLeftPad < MenuBtnWidth:
+                if MenuStartY + MenuLenY - padding - MenuBtnHeight < col < MenuStartY + MenuLenY - padding:
+                    print("Quit")
+
+                if Y < col < Y + MenuBtnHeight:
+                    print("Save Game")
+                    return
+                Y += padding + MenuBtnHeight
+
+                if Y < col < Y + MenuBtnHeight:
+                    print("Settings")
+                    return
+                Y += padding + MenuBtnHeight
+
+                if Y < col < Y + MenuBtnHeight:
+                    print("Continue with bot")
+                    return
+                Y += padding + MenuBtnHeight
+
+                if Y < col < Y + MenuBtnHeight:
+                    print("Request draw")
+                    return
+                Y += padding + MenuBtnHeight
+
+                if Y < col < Y + MenuBtnHeight:
+                    print("Resign")
+                    return
 
     def click(self, pos):
         pos = getRowColFromPos(pos)
