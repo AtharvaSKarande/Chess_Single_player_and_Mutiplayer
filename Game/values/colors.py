@@ -3,6 +3,8 @@ CHESS_WHITE = (238, 238, 210)
 CHESS_BLACK = (118, 150, 86)
 
 MenuColor = (200, 0, 0)
+MenuBtnColor = CHESS_WHITE
+MenuBtnTextColor = (0, 0, 0)
 
 BorderColor = (50, 50, 50)
 CheckColor = (255, 0, 0)

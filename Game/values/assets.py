@@ -1,11 +1,18 @@
 import pygame
-from Game.values.dimens import PieceDimen
+
+from Game.values.dimens import PieceDimen, TitleLenX, TitleLenY, HEIGHT, WIDTH, ArrowBtnLenX, ArrowBtnLenY
 
 # Fonts
 gameFont = "Assets/product_sans_regular.ttf"
 gameFontBold = "Assets/product_sans_bold.ttf"
 
 # Pieces
+# 345, 148
+w = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
+BackArrow = pygame.transform.scale(pygame.image.load('assets/back_arrow.png'), (ArrowBtnLenX, ArrowBtnLenY))
+ForwardArrow = pygame.transform.scale(pygame.image.load('assets/forward_arrow.png'), (ArrowBtnLenX, ArrowBtnLenY))
+
+title = pygame.transform.scale(pygame.image.load('assets/title.png'), (TitleLenX, TitleLenY))
 WHITE_PAWN = pygame.transform.scale(pygame.image.load('assets/wpawn.png'), (PieceDimen, PieceDimen))
 WHITE_KING = pygame.transform.scale(pygame.image.load('assets/wking.png'), (PieceDimen, PieceDimen))
 WHITE_QUEEN = pygame.transform.scale(pygame.image.load('assets/wqueen.png'), (PieceDimen, PieceDimen))

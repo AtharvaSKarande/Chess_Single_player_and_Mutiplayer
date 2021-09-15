@@ -15,11 +15,26 @@ SquareDimen = int((HEIGHT - 2 * padding) / 8)
 # Dimensions of pieces
 PieceDimen = int(SquareDimen * 0.95)
 
+# Title
+TitleStartX = 0
+TitleStartY = 0
+TitleLenX = int(WIDTH * 0.225)
+TitleLenY = int(HEIGHT * 0.2)
+
 # Menu tab
-MenuStartX = 0
-MenuStartY = 0
-MenuLenX = int(WIDTH * 0.25)
-MenuLenY = HEIGHT * 0.7
+MenuStartX = TitleStartX
+MenuStartY = TitleStartY + TitleLenY
+MenuLenX = TitleLenX
+MenuLenY = HEIGHT - TitleLenY - int(HEIGHT * 0.3)
+
+# Menu Buttons
+
+MenuBtnLeftPad = 35
+MenuBtnFntSize = 28
+MenuBtnHeight = 36
+MenuBtnWidth = TitleLenX - 2 * MenuBtnLeftPad
+ArrowBtnLenX = SquareDimen//2
+ArrowBtnLenY = SquareDimen//2
 
 # Board
 BoardStartX = MenuStartX + MenuLenX
@@ -28,15 +43,15 @@ BoardLen = HEIGHT
 
 # Player 1
 P1StartX = 0
-P1StartY = HEIGHT * 0.7
-P1LenX = MenuLenX
-P1LenY = HEIGHT * 0.15
+P1StartY = int(HEIGHT * 0.7)
+P1LenX = TitleLenX
+P1LenY = int(HEIGHT * 0.15)
 
 # Player 2
 P2StartX = 0
-P2StartY = HEIGHT * 0.85
-P2LenX = MenuLenX
-P2LenY = HEIGHT * 0.16
+P2StartY = int(HEIGHT * 0.85)
+P2LenX = TitleLenX
+P2LenY = int(HEIGHT * 0.16)
 
 # Evaluation Bar (Temporarily, eval bar is not displayed.)
 EvalBarStartX = BoardStartX + BoardLen - padding

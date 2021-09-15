@@ -51,7 +51,24 @@ class UI:
         pygame.display.update()
 
     def drawMenu(self):
-        pass
+        self.win.blit(title, (TitleStartX, TitleStartY))
+        txtX = (TitleStartX + TitleLenX) // 2
+        txtY = MenuStartY + padding * 3 + MenuBtnHeight
+
+        self.win.blit(BackArrow, (txtX - padding - ArrowBtnLenX, MenuStartY + padding))
+        self.win.blit(ForwardArrow, (txtX + padding, MenuStartY + padding))
+
+        # Buttons
+        for buttonTxt in ['Save Game', 'Settings', 'Continue with bot', 'Request Draw', 'Resign']:
+            pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 12)
+            self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
+            txtY += MenuBtnHeight + padding
+
+        # Placing Quit button at end.
+        txtY = MenuStartY + MenuLenY - padding - MenuBtnHeight
+        pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 12)
+        self.drawText('Save and Quit', MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
+        txtY += MenuBtnHeight + padding
 
     def drawCoordinates(self):
         font = pygame.font.Font(gameFontBold, 20)
@@ -90,8 +107,8 @@ class UI:
         Y = checkY + (SquareDimen - PieceDimen) // 2
 
         if piece == 'TAKE':
-            pygame.draw.circle(self.win, TakeColor, (checkX + SquareDimen//2, checkY + SquareDimen//2),
-                               SquareDimen//2, 7)
+            pygame.draw.circle(self.win, TakeColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+                               SquareDimen // 2, 7)
         elif piece == 'MOVE':
             pygame.draw.circle(self.win, MoveColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
                                10, 10)
@@ -144,8 +161,8 @@ class UI:
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
         self.drawText(self.chessBoard.p1Name, 24, P1StartX + 3 * pad + SquareDimen, P1StartY + pad, CHESS_BLACK)
-        self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
-                      RatingFC, RatingBC, font=gameFontBold)
+        # self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
+        # RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayer2(self, turn=False):
         pygame.draw.rect(self.win, CHESS_BLACK, (P2StartX, P2StartY, P2LenX, P2LenY))
@@ -156,8 +173,8 @@ class UI:
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
         self.drawText(self.chessBoard.p2Name, 24, P2StartX + 3 * pad + SquareDimen, P2StartY + pad, CHESS_WHITE)
-        self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
-                      RatingFC, RatingBC, font=gameFontBold)
+        # self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
+        # RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayers(self):
         if self.chessBoard.turn:
@@ -330,8 +347,13 @@ class UI:
     def drawText(self, text, size, txtX, txtY, color, colorBg=None, font=gameFont, centre=False):
         Txt = pygame.font.Font(font, size).render(text, True, color, colorBg)
         nameRect = Txt.get_rect()
-        if not centre:
-            txtX += nameRect.center[0]
-            txtY += nameRect.center[1]
+        if centre in [False, 'X', 'Y']:
+            if centre == 'Y':
+                txtX += nameRect.center[0]
+            elif centre == 'X':
+                txtY += nameRect.center[1]
+            else:
+                txtX += nameRect.center[0]
+                txtY += nameRect.center[1]
         nameRect.center = (txtX, txtY)
         self.win.blit(Txt, nameRect)

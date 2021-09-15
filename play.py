@@ -5,7 +5,7 @@ from Game.ui import UI
 from Game.values.dimens import WIDTH, HEIGHT
 
 FPS = 60
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+win = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption('Chess: Single player and Multiplayer')
 
 
