@@ -2,7 +2,7 @@
 CHESS_WHITE = (238, 238, 210)
 CHESS_BLACK = (118, 150, 86)
 
-MenuColor = (200, 0, 0)
+MenuColor = CHESS_BLACK
 MenuBtnColor = CHESS_WHITE
 MenuBtnTextColor = (0, 0, 0)
 

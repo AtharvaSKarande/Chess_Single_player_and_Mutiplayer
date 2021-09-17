@@ -48,6 +48,7 @@ class chessBoard:
         # Stores the first move where respective piece was moved. (Also serves the purpose of castling rights.)
         self.piecesMoved = {'K': -1, 'LR': -1, 'RR': -1, 'k': -1, 'lr': -1, 'rr': -1}
 
+        self.draw_accepted = False
         self.winner = None
 
         self.p1Name = p1Name
@@ -324,9 +325,11 @@ class chessBoard:
                         self.black_rooks -= 1
                     elif capturedPiece == 'P':
                         self.black_pawns -= 1
-                        # if En-passant
+                        # if En-passant then remove the captured pawn.
                         if move[0] == 'P' and oldPos[0] == 4 and newPos[0] == 5 and abs(oldPos[1] - newPos[1]) == 1:
-                            self.pieces[oldPos[0]][newPos[1]] = '.'
+                            if self.moveCount-1 in self.en_passants.keys():
+                                if self.en_passants[self.moveCount-1] == newPos[1]:
+                                    self.pieces[oldPos[0]][newPos[1]] = '.'
             else:
                 if 'x' in move:
                     capturedPiece = move[1 + move.find('x')]
@@ -343,9 +346,11 @@ class chessBoard:
                         self.white_rooks -= 1
                     elif capturedPiece == 'P':
                         self.white_pawns -= 1
-                        # if En-passant
+                        # if En-passant then remove the captured pawn.
                         if move[0] == 'P' and oldPos[0] == 3 and newPos[0] == 2 and abs(oldPos[1] - newPos[1]) == 1:
-                            self.pieces[oldPos[0]][newPos[1]] = '.'
+                            if self.moveCount - 1 in self.en_passants.keys():
+                                if self.en_passants[self.moveCount - 1] == newPos[1]:
+                                    self.pieces[oldPos[0]][newPos[1]] = '.'
 
         self.moveCount += 1
         self.change_turn()
@@ -762,6 +767,7 @@ class chessBoard:
             else:
                 return False
 
+    # Implementation remained.
     def draw_by_threefold_repetition(self):
         pass
 
@@ -786,6 +792,7 @@ class chessBoard:
                         validMoves.extend(piece.getValidMoves(self))
         return validMoves
 
+    # Use and Implementation remained.
     def evaluate_advantage(self):
         pass
 
@@ -815,6 +822,14 @@ class chessBoard:
         if not self.get_all_valid_moves():
             return True
         return False
+
+    def win_by_resignation(self):
+        if self.winner is not None:
+            return True
+        return False
+
+    def request_draw(self):
+        self.draw_accepted = True
 
     def resign(self):
         if self.turn:

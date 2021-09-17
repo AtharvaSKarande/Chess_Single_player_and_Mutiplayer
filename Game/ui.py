@@ -25,7 +25,8 @@ class UI:
         self.promotionMove = None
 
     def drawDisplay(self):
-        self.win.fill(MenuColor)
+        # self.win.fill(MenuColor)
+        self.drawTitle()
         self.drawMenu()
         self.updateBoard()
         pygame.display.update()
@@ -50,24 +51,32 @@ class UI:
         self.drawFEN()
         pygame.display.update()
 
-    def drawMenu(self):
+    def drawTitle(self):
         self.win.blit(title, (TitleStartX, TitleStartY))
+
+    def drawMenu(self):
+        pygame.draw.rect(self.win, MenuColor, ((MenuStartX, MenuStartY), (MenuLenX, MenuLenY)))
+
         txtX = (TitleStartX + TitleLenX) // 2
         txtY = MenuStartY + padding * 3 + MenuBtnHeight
 
-        self.win.blit(BackArrow, (txtX - padding - ArrowBtnLenX, MenuStartY + padding))
-        self.win.blit(ForwardArrow, (txtX + padding, MenuStartY + padding))
+        pygame.draw.rect(self.win, CHESS_WHITE, (((txtX - padding - ArrowBtnLenX, MenuStartY + padding),
+                                                  (ArrowBtnLenX, ArrowBtnLenY))), 0, 8)
+        pygame.draw.rect(self.win, CHESS_WHITE, ((txtX + padding, MenuStartY + padding),
+                                                 (ArrowBtnLenX, ArrowBtnLenY)), 0, 8)
+        # self.win.blit(BackArrow, (txtX - padding - ArrowBtnLenX, MenuStartY + padding))
+        # self.win.blit(ForwardArrow, (txtX + padding, MenuStartY + padding))
 
         # Buttons
         for buttonTxt in ['Save Game', 'Settings', 'Continue with bot', 'Request Draw', 'Resign']:
             pygame.draw.rect(self.win, MenuBtnColor, ((MenuStartX + MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)
-                                                      ), 0, 12)
+                                                      ), 0, 8)
             self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
             txtY += MenuBtnHeight + padding
 
         # Placing Quit button at end.
         txtY = MenuStartY + MenuLenY - padding - MenuBtnHeight
-        pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 12)
+        pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 8)
         self.drawText('Quit', MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
         txtY += MenuBtnHeight + padding
 
@@ -161,7 +170,8 @@ class UI:
         pygame.draw.rect(self.win, CHESS_BLACK, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
-        self.drawText(self.chessBoard.p1Name, 24, P1StartX + 3 * pad + SquareDimen, P1StartY + pad, CHESS_BLACK)
+        self.drawText(self.chessBoard.p1Name, 36, P1StartX + 3 * pad + SquareDimen, P1StartY + (padding+SquareDimen)//2,
+                      CHESS_BLACK, centre='Y', font=gameFontBold)
         # self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
@@ -173,7 +183,8 @@ class UI:
         pygame.draw.rect(self.win, CHESS_WHITE, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
-        self.drawText(self.chessBoard.p2Name, 24, P2StartX + 3 * pad + SquareDimen, P2StartY + pad, CHESS_WHITE)
+        self.drawText(self.chessBoard.p2Name, 36, P2StartX + 3 * pad + SquareDimen, P2StartY + (padding+SquareDimen)//2,
+                      CHESS_WHITE, centre='Y', font=gameFontBold)
         # self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
@@ -198,6 +209,13 @@ class UI:
             print("Draw by insufficient material.")
         elif self.chessBoard.draw_by_stalemate():
             print("Draw by stalemate.")
+        elif self.chessBoard.win_by_resignation():
+            if self.chessBoard.winner == CHESS_BLACK:
+                print("Black won by resignation.")
+            else:
+                print("White won by resignation.")
+        elif self.chessBoard.draw_accepted:
+            print("Draw Accepted.")
         else:
             return False
         return True
@@ -219,7 +237,7 @@ class UI:
         pass
 
     def drawFEN(self):
-        # pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
+        pygame.draw.rect(self.win, (100, 100, 100), (FENStartX, FENStartY, FENLenX, FENLenY))
         pass
 
     def menuClick(self, pos):
@@ -230,12 +248,14 @@ class UI:
             # Backward and forward move
             if 0 < col - MenuStartY - padding < ArrowBtnLenY:
                 if centre - padding - ArrowBtnLenX < row < centre - padding:
+                    self.clearUIMoves()
                     success = self.chessBoard.move_back()
                     if not success:
                         print("Error")
                     self.updateBoard()
 
                 elif 0 < row - centre - padding < ArrowBtnLenX:
+                    self.clearUIMoves()
                     success = self.chessBoard.move()
                     if not success:
                         print("Error")
@@ -244,31 +264,35 @@ class UI:
             Y = MenuStartY + padding * 3 + MenuBtnHeight
             if 0 < row - MenuStartX - MenuBtnLeftPad < MenuBtnWidth:
                 if MenuStartY + MenuLenY - padding - MenuBtnHeight < col < MenuStartY + MenuLenY - padding:
-                    print("Quit")
+                    print("Game quit.")
+                    pygame.quit()
+                    return 0
 
                 if Y < col < Y + MenuBtnHeight:
                     print("Save Game")
-                    return
+                    return 1
                 Y += padding + MenuBtnHeight
 
                 if Y < col < Y + MenuBtnHeight:
                     print("Settings")
-                    return
+                    return 1
                 Y += padding + MenuBtnHeight
 
                 if Y < col < Y + MenuBtnHeight:
                     print("Continue with bot")
-                    return
+                    return 1
                 Y += padding + MenuBtnHeight
 
                 if Y < col < Y + MenuBtnHeight:
-                    print("Request draw")
-                    return
+                    # print("Request draw")
+                    self.chessBoard.request_draw()
+                    return 1
                 Y += padding + MenuBtnHeight
 
                 if Y < col < Y + MenuBtnHeight:
-                    print("Resign")
-                    return
+                    # print("Resign")
+                    self.chessBoard.resign()
+                    return 1
 
     def click(self, pos):
         pos = getRowColFromPos(pos)

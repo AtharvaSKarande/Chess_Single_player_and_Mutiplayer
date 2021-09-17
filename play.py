@@ -15,7 +15,6 @@ def start():
     chessBoard = Chess.chessBoard()
     displayUI = UI(win, chessBoard)
     displayUI.drawDisplay()
-    # SRrecog = SpeechRecogniser()
 
     while running:
         clock.tick(FPS)
@@ -27,10 +26,10 @@ def start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 if pos[0] < TitleLenX:
-                    displayUI.menuClick(pos)
+                    running = displayUI.menuClick(pos)
                 else:
                     displayUI.click(pos)
-        # print(displayUI.chessBoard.en_passants)
+
         if displayUI.isGameEnd():
             running = False
     pygame.quit()

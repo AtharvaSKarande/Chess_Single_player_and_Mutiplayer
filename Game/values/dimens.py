@@ -37,7 +37,7 @@ ArrowBtnLenX = SquareDimen//2
 ArrowBtnLenY = SquareDimen//2
 
 # Board
-BoardStartX = MenuStartX + MenuLenX
+BoardStartX = TitleStartX + MenuLenX
 BoardStartY = 0
 BoardLen = HEIGHT
 
