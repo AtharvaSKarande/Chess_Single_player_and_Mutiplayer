@@ -1,4 +1,5 @@
 from Game.values.colors import CHESS_WHITE, CHESS_BLACK
+from Game.values.string import brdFileName
 from .bishop import Bishop
 from .pawn import Pawn
 from .king import King
@@ -6,6 +7,7 @@ from .rook import Rook
 from .queen import Queen
 from .knight import Knight
 from .static import get_row_col, is_valid_rc
+import pickle
 
 
 class chessBoard:
@@ -836,3 +838,7 @@ class chessBoard:
             self.winner = CHESS_BLACK
         else:
             self.winner = CHESS_WHITE
+
+    def save_board(self):
+        with open(brdFileName, 'wb') as brdFile:
+            pickle.dump(self, brdFile)

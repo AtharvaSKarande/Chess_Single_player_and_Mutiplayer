@@ -1,8 +1,11 @@
-import pygame
+import pickle
 
+import pygame
+import os
 import Chess
 from Game.ui import UI
 from Game.values.dimens import WIDTH, HEIGHT, TitleLenX
+from Game.values.string import brdFileName
 
 FPS = 60
 win = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
@@ -12,7 +15,11 @@ pygame.display.set_caption('Chess: Single player and Multiplayer')
 def start():
     running = True
     clock = pygame.time.Clock()
-    chessBoard = Chess.chessBoard()
+    if os.path.exists(brdFileName):
+        with open(brdFileName, "rb") as savedBrd:
+            chessBoard = pickle.load(savedBrd)
+    else:
+        chessBoard = Chess.chessBoard()
     displayUI = UI(win, chessBoard)
     displayUI.drawDisplay()
 
@@ -31,8 +38,14 @@ def start():
                     displayUI.click(pos)
 
         if displayUI.isGameEnd():
+            delete_saved_board()
             running = False
     pygame.quit()
+
+
+def delete_saved_board():
+    if os.path.exists(brdFileName):
+        os.remove(brdFileName)
 
 
 if __name__ == "__main__":

@@ -269,7 +269,8 @@ class UI:
                     return 0
 
                 if Y < col < Y + MenuBtnHeight:
-                    print("Save Game")
+                    self.chessBoard.save_board()
+                    print('Game saved.')
                     return 1
                 Y += padding + MenuBtnHeight
 
