@@ -5,7 +5,7 @@ pygame.init()
 info = pygame.display.Info()
 WIDTH, HEIGHT = int(info.current_w), int(info.current_h * 0.92)
 
-padding = 15
+padding = 16
 
 coordinates = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
 letters = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8}
@@ -19,7 +19,7 @@ PieceDimen = int(SquareDimen * 0.95)
 TitleStartX = 0
 TitleStartY = 0
 TitleLenX = int(WIDTH * 0.225)
-TitleLenY = int(HEIGHT * 0.2)
+TitleLenY = int(HEIGHT * 0.15)
 
 # Menu tab
 MenuStartX = TitleStartX
