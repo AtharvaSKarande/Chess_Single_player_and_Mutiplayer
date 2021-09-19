@@ -3,7 +3,7 @@ import pickle
 import pygame
 import os
 import Chess
-from Game.ui import UI
+from Game import UI
 from Game.values.dimens import WIDTH, HEIGHT, TitleLenX
 from Game.values.string import brdFileName
 
