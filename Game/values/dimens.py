@@ -7,6 +7,7 @@ WIDTH, HEIGHT = int(info.current_w), int(info.current_h * 0.92)
 
 btnPadding = 15
 padding = 15
+dialogPad = padding//2
 
 coordinates = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
 letters = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8}
@@ -67,3 +68,16 @@ FENStartX = EvalBarStartX + EvalBarLenX
 FENStartY = 0
 FENLenX = WIDTH - FENStartX
 FENLenY = HEIGHT
+
+# Alert Dialog (Outer box)
+AlertDialogStartX = int(BoardStartX+padding+1.5*SquareDimen)
+AlertDialogStartY = int(BoardStartY+padding+2.5*SquareDimen)
+AlertDialogLenX = int(5*SquareDimen)
+AlertDialogLenY = int(3*SquareDimen)
+DialogTitleHeight = SquareDimen//2
+
+# Alert Dialog (Inner Box)
+DialogInX = AlertDialogStartX+dialogPad
+DialogInY = AlertDialogStartY+dialogPad+DialogTitleHeight
+DialogInLenX = AlertDialogLenX - 2 * dialogPad
+DialogInLenY = AlertDialogLenY - 2 * dialogPad - DialogTitleHeight

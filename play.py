@@ -11,42 +11,52 @@ FPS = 60
 win = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption('Chess: Single player and Multiplayer')
 
+class Play:
+    def __init__(self):
+        self.chessBoard = None
 
-def start():
-    running = True
-    clock = pygame.time.Clock()
-    if os.path.exists(brdFileName):
-        with open(brdFileName, "rb") as savedBrd:
-            chessBoard = pickle.load(savedBrd)
-    else:
-        chessBoard = Chess.chessBoard()
-    displayUI = UI(win, chessBoard)
-    displayUI.drawDisplay()
+    def start(self):
+        running = True
+        clock = pygame.time.Clock()
+        self.assignChessBoard()
+        displayUI = UI(win, self.chessBoard)
+        displayUI.drawDisplay()
 
-    while running:
-        clock.tick(FPS)
-        for event in pygame.event.get():
+        while running:
+            clock.tick(FPS)
+            for event in pygame.event.get():
 
-            if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT:
+                    running = False
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    if displayUI.dialog:
+                        displayUI.dialogClick(pos)
+                    else:
+                        if pos[0] < TitleLenX:
+                            running = displayUI.menuClick(pos)
+                        else:
+                            displayUI.click(pos)
+
+            if displayUI.isGameEnd():
+                self.delete_saved_board()
                 running = False
+        pygame.quit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if pos[0] < TitleLenX:
-                    running = displayUI.menuClick(pos)
-                else:
-                    displayUI.click(pos)
+    def assignChessBoard(self):
+        if os.path.exists(brdFileName):
+            with open(brdFileName, "rb") as savedBrd:
+                self.chessBoard = pickle.load(savedBrd)
+        else:
+            self.chessBoard = Chess.chessBoard()
 
-        if displayUI.isGameEnd():
-            delete_saved_board()
-            running = False
-    pygame.quit()
-
-
-def delete_saved_board():
-    if os.path.exists(brdFileName):
-        os.remove(brdFileName)
+    def delete_saved_board(self):
+        if os.path.exists(brdFileName):
+            os.remove(brdFileName)
+            self.chessBoard = None
 
 
 if __name__ == "__main__":
-    start()
+    playGame = Play()
+    playGame.start()

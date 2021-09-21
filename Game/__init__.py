@@ -1,12 +1,15 @@
+import time
+
 import pygame.display
 
 from Chess.static import get_row_col
 from .values.colors import *
 from .values.dimens import *
 from .values.assets import *
+from .alertDialog import AlertDialog
 
 
-def getRowColFromPos(pos):
+def getBoardRowColFromPos(pos):
     row, col = pos
     if BoardStartX + padding < row < BoardStartX + padding + 8 * SquareDimen:
         if padding < col < HEIGHT - padding - 1:
@@ -23,6 +26,7 @@ class UI:
         self.takesLoc = {}
         self.castleLoc = {}
         self.promotionMove = None
+        self.dialog = False
 
     def drawDisplay(self):
         # self.win.fill(MenuColor)
@@ -131,10 +135,10 @@ class UI:
                                SquareDimen // 2, 7)
         elif piece == 'MOVE':
             pygame.draw.circle(self.win, MoveColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
-                               10, 10)
+                               SquareDimen//9)
         elif piece == 'CASTLE':
             pygame.draw.circle(self.win, CastleColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
-                               10, 10)
+                               SquareDimen//9)
         elif piece == 'SELECT':
             pygame.draw.rect(self.win, SelectColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
 
@@ -180,7 +184,8 @@ class UI:
         pygame.draw.rect(self.win, CHESS_BLACK, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
-        self.drawText(self.chessBoard.p1Name, 36, P1StartX + 3 * pad + SquareDimen, P1StartY + (padding+SquareDimen)//2,
+        self.drawText(self.chessBoard.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
+                      P1StartY + (padding + SquareDimen) // 2,
                       CHESS_BLACK, centre='Y', font=gameFontBold)
         # self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
@@ -193,7 +198,8 @@ class UI:
         pygame.draw.rect(self.win, CHESS_WHITE, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
-        self.drawText(self.chessBoard.p2Name, 36, P2StartX + 3 * pad + SquareDimen, P2StartY + (padding+SquareDimen)//2,
+        self.drawText(self.chessBoard.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
+                      P2StartY + (padding + SquareDimen) // 2,
                       CHESS_WHITE, centre='Y', font=gameFontBold)
         # self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
@@ -281,6 +287,7 @@ class UI:
                 if Y < col < Y + MenuBtnHeight:
                     self.chessBoard.save_board()
                     print('Game saved.')
+                    self.showDialog("Game Saved.", "Chess", positiveBtn="Okay", negativeBtn="No")
                 Y += btnPadding + MenuBtnHeight
 
                 if Y < col < Y + MenuBtnHeight:
@@ -302,7 +309,7 @@ class UI:
         return 1
 
     def click(self, pos):
-        pos = getRowColFromPos(pos)
+        pos = getBoardRowColFromPos(pos)
         if pos != (-1, -1):
             col, row = pos
             row = abs(7 - row)
@@ -437,3 +444,21 @@ class UI:
                 txtY += nameRect.center[1]
         nameRect.center = (txtX, txtY)
         self.win.blit(Txt, nameRect)
+
+    def showDialog(self, text, winTitle="Chess", positiveBtn=None, negativeBtn=None, sleepTime=0.5):
+        self.dialog = AlertDialog(self.win, text, winTitle, positiveBtn, negativeBtn)
+        self.dialog.show()
+        if positiveBtn == negativeBtn is None:
+            time.sleep(sleepTime)
+            self.removeDialog()
+
+    def dialogClick(self, pos):
+        if self.dialog.pBtn and pygame.Rect.collidepoint(self.dialog.pBtnRect, pos):
+            print('FFF')
+        if self.dialog.nBtn and pygame.Rect.collidepoint(self.dialog.nBtnRect, pos):
+            print('000')
+        self.removeDialog()
+
+    def removeDialog(self):
+        self.dialog = None
+        self.updateBoard()
