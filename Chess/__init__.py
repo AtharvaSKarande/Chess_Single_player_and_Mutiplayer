@@ -789,9 +789,9 @@ class chessBoard:
                 if piece != '.' and piece.color == color:
                     if piece.role in ['P', 'p'] and (self.moveCount - 1) in self.en_passants.keys():
                         # noinspection PyArgumentList
-                        validMoves.extend(piece.getValidMoves(self, self.en_passants[self.moveCount - 1]))
+                        validMoves.extend(piece.get_valid_moves(self, self.en_passants[self.moveCount - 1]))
                     else:
-                        validMoves.extend(piece.getValidMoves(self))
+                        validMoves.extend(piece.get_valid_moves(self))
         return validMoves
 
     # Use and Implementation remained.
@@ -821,7 +821,7 @@ class chessBoard:
         return whiteScore, blackScore
 
     def draw_by_stalemate(self):
-        if not self.get_all_valid_moves():
+        if not self.get_all_valid_moves() and not self.is_check():
             return True
         return False
 

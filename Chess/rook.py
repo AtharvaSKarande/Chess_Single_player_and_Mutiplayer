@@ -14,7 +14,7 @@ class Rook:
         else:
             self.role = 'r'
 
-    def getValidMoves(self, board):
+    def get_valid_moves(self, board):
         pieces = board.pieces
         validMoves = []
         allMoves = []

@@ -14,7 +14,7 @@ class Knight:
         else:
             self.role = 'n'
 
-    def getValidMoves(self, board):
+    def get_valid_moves(self, board):
         pieces = board.pieces
         validMoves = []
         allMoves = []

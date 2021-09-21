@@ -15,7 +15,7 @@ class Pawn:
         else:
             self.role = 'p'
 
-    def getValidMoves(self, board, en_passant_col=-1):
+    def get_valid_moves(self, board, en_passant_col=-1):
         pieces = board.pieces
         validMoves = []
         allMoves = []

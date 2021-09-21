@@ -14,7 +14,7 @@ class King:
         else:
             self.role = 'k'
 
-    def getValidMoves(self, board):
+    def get_valid_moves(self, board):
         pieces = board.pieces
         validMoves = []
         allMoves = []

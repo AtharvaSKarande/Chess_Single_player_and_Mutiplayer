@@ -71,8 +71,8 @@ class UI:
             self.drawText('  <', 35, txtX - btnPadding - ArrowBtnLenX, MenuStartY + btnPadding, MenuBtnTextColor,
                           font=gameFontBold)
         if self.chessBoard.poppedMoveList:
-            pygame.draw.rect(self.win, CHESS_WHITE, ((txtX + btnPadding, MenuStartY + btnPadding), (ArrowBtnLenX,
-                                                                                              ArrowBtnLenY)), 0, 8)
+            pygame.draw.rect(self.win, CHESS_WHITE, ((txtX + btnPadding, MenuStartY + btnPadding),
+                                                     (ArrowBtnLenX, ArrowBtnLenY)), 0, 8)
             self.drawText('  >', 35, txtX + btnPadding, MenuStartY + btnPadding, MenuBtnTextColor, font=gameFontBold)
         # self.win.blit(BackArrow, (txtX - btnPadding - ArrowBtnLenX, MenuStartY + btnPadding))
         # self.win.blit(ForwardArrow, (txtX + btnPadding, MenuStartY + btnPadding))
@@ -374,9 +374,9 @@ class UI:
         self.selectedPiece = clickedPiece
         board = self.chessBoard
         if self.selectedPiece.role in ['P', 'p'] and (board.moveCount - 1) in board.en_passants.keys():
-            moves = clickedPiece.getValidMoves(board, board.en_passants[board.moveCount - 1])
+            moves = clickedPiece.get_valid_moves(board, board.en_passants[board.moveCount - 1])
         else:
-            moves = clickedPiece.getValidMoves(board)
+            moves = clickedPiece.get_valid_moves(board)
         for mv in moves:
             if 'x' in mv:
                 self.takesLoc[get_row_col(mv[5:7])] = mv
