@@ -19,7 +19,7 @@ class Play:
         running = True
         clock = pygame.time.Clock()
         self.assignChessBoard()
-        displayUI = UI(win, self.chessBoard)
+        displayUI = UI(win, self.chessBoard, 'English')
         displayUI.drawDisplay()
 
         while running:
@@ -35,7 +35,7 @@ class Play:
                         displayUI.dialogClick(pos)
                     else:
                         if pos[0] < TitleLenX:
-                            running = displayUI.menuClick(pos)
+                            displayUI.menuClick(pos)
                         else:
                             displayUI.click(pos)
 

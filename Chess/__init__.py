@@ -11,7 +11,7 @@ import pickle
 
 
 class chessBoard:
-    def __init__(self, Board_type="STANDARD", p1Name="Player 1", p1Rating="P1", p2Name="Player 2", p2Rating="P2"):
+    def __init__(self, Board_type="STANDARD"):
 
         self.WhiteKing = None
         self.BlackKing = None
@@ -52,11 +52,6 @@ class chessBoard:
 
         self.draw_accepted = False
         self.winner = None
-
-        self.p1Name = p1Name
-        self.p2Name = p2Name
-        self.p1Rating = p1Rating
-        self.p2Rating = p2Rating
         self.initialize_pieces()
 
     def initialize_pieces(self):
@@ -769,9 +764,13 @@ class chessBoard:
             else:
                 return False
 
-    # Implementation remained.
     def draw_by_threefold_repetition(self):
-        pass
+        if len(self.moveList) >= 7:
+            if self.moveList[-1] == self.moveList[-5]:
+                if self.moveList[-2] == self.moveList[-6]:
+                    if self.moveList[-3] == self.moveList[-7]:
+                        return True
+        return False
 
     def change_turn(self):
         self.turn = not self.turn

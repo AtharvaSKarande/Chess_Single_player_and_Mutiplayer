@@ -25,22 +25,29 @@ class AlertDialog:
         self.drawText(self.title, 50, AlertDialogStartX+AlertDialogLenX//2, AlertDialogStartY +
                       (dialogPad+DialogTitleHeight)//2, CHESS_WHITE, font=gameFont, centre='XY')
 
-        self.drawText(self.alertText, 30, DialogInX + DialogInLenX//2, DialogInY + SquareDimen//2, CHESS_WHITE,
-                      centre=True)
+        brk = self.alertText.find('*')
+        if brk == -1:
+            self.drawText(self.alertText, 40, DialogInX + DialogInLenX//2, DialogInY + SquareDimen,
+                          CHESS_WHITE, centre=True)
+        else:
+            self.drawText(self.alertText[:brk], 30, DialogInX + DialogInLenX // 2, DialogInY + SquareDimen // 2,
+                          CHESS_WHITE, centre=True)
+            self.drawText(self.alertText[brk+1:], 30, DialogInX + DialogInLenX // 2, DialogInY + SquareDimen,
+                          CHESS_WHITE, centre=True)
 
         btnX = DialogInX + int(0.125*DialogInLenX)
         btnLenY = int(DialogInLenY*0.2)
-        btnY = DialogInY + int(0.625*DialogInLenY)
+        btnY = DialogInY + int(0.7*DialogInLenY)
         if self.nBtn:
             btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 10*(len(self.nBtn)+2)))
             self.nBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX, btnY), (btnLenX, btnLenY)),
                                              border_radius=15)
-            self.drawText(self.nBtn, 20, btnX+btnLenX//2, btnY+btnLenY//2, (0, 0, 0), centre=True)
+            self.drawText(self.nBtn[0], 20, btnX+btnLenX//2, btnY+btnLenY//2, (0, 0, 0), centre=True)
         if self.pBtn:
             btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 10*(len(self.pBtn)+2)))
             self.pBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX + DialogInLenX//2, btnY),
                                                                      (btnLenX, btnLenY)), border_radius=15)
-            self.drawText(self.pBtn, 20, btnX + DialogInLenX//2 + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0),
+            self.drawText(self.pBtn[0], 20, btnX + DialogInLenX//2 + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0),
                           centre=True)
         pygame.display.update()
 

@@ -18,7 +18,7 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard):
+    def __init__(self, win, chessBoard, p1Name="Player 1", p2Name="Player 2", p1Rating="P1", p2Rating="P2"):
         self.win = win
         self.chessBoard = chessBoard
         self.selectedPiece = None
@@ -27,6 +27,11 @@ class UI:
         self.castleLoc = {}
         self.promotionMove = None
         self.dialog = False
+
+        self.p1Name = p1Name
+        self.p2Name = p2Name
+        self.p1Rating = p1Rating
+        self.p2Rating = p2Rating
 
     def drawDisplay(self):
         # self.win.fill(MenuColor)
@@ -58,10 +63,6 @@ class UI:
     def drawTitle(self):
         pygame.draw.rect(self.win, CHESS_WHITE, ((TitleStartX, TitleStartY), (TitleLenX, TitleLenY)))
         self.win.blit(title, (TitleStartX, TitleStartY))
-        # self.drawText('CHESS', 72, (TitleStartX + TitleLenX) // 2, padding, BorderColor,
-        # font="Assets/title.ttf", centre='X')
-        # self.drawText('Single player and Multiplayer', 25, (TitleStartX + TitleLenX) // 2,
-        # TitleStartY+TitleLenY - padding - 15, BorderColor, font=gameFontBold, centre=True)
 
     def drawMenu(self):
         pygame.draw.rect(self.win, MenuColor, ((MenuStartX, MenuStartY), (MenuLenX, MenuLenY)))
@@ -135,10 +136,10 @@ class UI:
                                SquareDimen // 2, 7)
         elif piece == 'MOVE':
             pygame.draw.circle(self.win, MoveColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
-                               SquareDimen//9)
+                               SquareDimen // 9)
         elif piece == 'CASTLE':
             pygame.draw.circle(self.win, CastleColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
-                               SquareDimen//9)
+                               SquareDimen // 9)
         elif piece == 'SELECT':
             pygame.draw.rect(self.win, SelectColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
 
@@ -184,10 +185,10 @@ class UI:
         pygame.draw.rect(self.win, CHESS_BLACK, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
-        self.drawText(self.chessBoard.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
+        self.drawText(self.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
                       P1StartY + (padding + SquareDimen) // 2,
                       CHESS_BLACK, centre='Y', font=gameFontBold)
-        # self.drawText(self.chessBoard.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
+        # self.drawText(self.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayer2(self, turn=False):
@@ -198,10 +199,10 @@ class UI:
         pygame.draw.rect(self.win, CHESS_WHITE, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
-        self.drawText(self.chessBoard.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
+        self.drawText(self.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
                       P2StartY + (padding + SquareDimen) // 2,
                       CHESS_WHITE, centre='Y', font=gameFontBold)
-        # self.drawText(self.chessBoard.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
+        # self.drawText(self.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayers(self):
@@ -265,48 +266,50 @@ class UI:
             if 0 < col - MenuStartY - btnPadding < ArrowBtnLenY:
                 if centre - btnPadding - ArrowBtnLenX < row < centre - btnPadding:
                     self.clearUIMoves()
-                    success = self.chessBoard.move_back()
-                    if not success:
-                        print("Error")
+                    self.chessBoard.move_back()
                     self.updateBoard()
 
                 elif 0 < row - centre - btnPadding < ArrowBtnLenX:
                     self.clearUIMoves()
-                    success = self.chessBoard.move()
-                    if not success:
-                        print("Error")
+                    self.chessBoard.move()
                     self.updateBoard()
 
             Y = MenuStartY + btnPadding * 3 + MenuBtnHeight
-            if 0 < row - MenuStartX - MenuBtnLeftPad < MenuBtnWidth:
-                if MenuStartY + MenuLenY - btnPadding - MenuBtnHeight < col < MenuStartY + MenuLenY - btnPadding:
-                    print("Game quit.")
-                    pygame.quit()
-                    return 0
 
+            if 0 < row - MenuStartX - MenuBtnLeftPad < MenuBtnWidth:
+                # Quit
+                if MenuStartY + MenuLenY - btnPadding - MenuBtnHeight < col < MenuStartY + MenuLenY - btnPadding:
+                    self.showDialog("Do you really want to quit?*The game will be saved.",
+                                    pBtn=("Yes", self.saveAndQuit), nBtn=("No", self.doNothing))
+
+                # Game saved.
                 if Y < col < Y + MenuBtnHeight:
                     self.chessBoard.save_board()
-                    print('Game saved.')
-                    self.showDialog("Game Saved.", "Chess", positiveBtn="Okay", negativeBtn="No")
+                    self.showDialog('Game Saved.')
                 Y += btnPadding + MenuBtnHeight
 
+                # Settings.
                 if Y < col < Y + MenuBtnHeight:
-                    print("Settings")
+                    print("Settings not implemented.")
                 Y += btnPadding + MenuBtnHeight
 
+                # Continue with bot.
                 if Y < col < Y + MenuBtnHeight:
-                    print("Continue with bot")
+                    self.showDialog("Do you want to continue*the game with the bot?", pBtn=("Yes", self.doNothing),
+                                    nBtn=("No", self.doNothing))
+                    print("Continue with bot not implemented.")
                 Y += btnPadding + MenuBtnHeight
 
+                # Request draw.
                 if Y < col < Y + MenuBtnHeight:
-                    # print("Request draw")
-                    self.chessBoard.request_draw()
+                    self.showDialog("Do you really want to*request a draw?", pBtn=("Yes", self.chessBoard.request_draw),
+                                    nBtn=("No", self.doNothing))
                 Y += btnPadding + MenuBtnHeight
 
+                # resign.
                 if Y < col < Y + MenuBtnHeight:
-                    # print("Resign")
-                    self.chessBoard.resign()
-        return 1
+                    self.showDialog("Do you really want to*resign form game?", pBtn=("Yes", self.chessBoard.resign),
+                                    nBtn=("No", self.doNothing))
 
     def click(self, pos):
         pos = getBoardRowColFromPos(pos)
@@ -445,18 +448,25 @@ class UI:
         nameRect.center = (txtX, txtY)
         self.win.blit(Txt, nameRect)
 
-    def showDialog(self, text, winTitle="Chess", positiveBtn=None, negativeBtn=None, sleepTime=0.5):
-        self.dialog = AlertDialog(self.win, text, winTitle, positiveBtn, negativeBtn)
+    def saveAndQuit(self):
+        self.chessBoard.save_board()
+        pygame.quit()
+
+    def doNothing(self):
+        pass
+
+    def showDialog(self, text, winTitle="Chess", pBtn=None, nBtn=None, sleepTime=0.5):
+        self.dialog = AlertDialog(self.win, text, winTitle, pBtn, nBtn)
         self.dialog.show()
-        if positiveBtn == negativeBtn is None:
+        if pBtn == nBtn is None:
             time.sleep(sleepTime)
             self.removeDialog()
 
     def dialogClick(self, pos):
         if self.dialog.pBtn and pygame.Rect.collidepoint(self.dialog.pBtnRect, pos):
-            print('FFF')
+            self.dialog.pBtn[1]()
         if self.dialog.nBtn and pygame.Rect.collidepoint(self.dialog.nBtnRect, pos):
-            print('000')
+            self.dialog.nBtn[1]()
         self.removeDialog()
 
     def removeDialog(self):
