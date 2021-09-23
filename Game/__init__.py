@@ -28,6 +28,8 @@ class UI:
         self.promotionMove = None
         self.dialog = False
 
+        self.analysis = False
+
         self.p1Name = p1Name
         self.p2Name = p2Name
         self.p1Rating = p1Rating
@@ -57,7 +59,9 @@ class UI:
         self.drawPromotion()
         self.drawPlayers()
         self.drawEvalBar()
+        self.drawEvaluationText()
         self.drawFEN()
+        self.isGameEnd()
         pygame.display.update()
 
     def drawTitle(self):
@@ -83,7 +87,7 @@ class UI:
         # self.win.blit(ForwardArrow, (txtX + btnPadding, MenuStartY + btnPadding))
 
         # Buttons
-        for buttonTxt in ['Save Game', 'Settings', 'Continue with bot', 'Request Draw', 'Resign']:
+        for buttonTxt in ['New Game', 'Save Game', 'Settings', 'Continue with bot', 'Request Draw', 'Resign']:
             pygame.draw.rect(self.win, MenuBtnColor, ((MenuStartX + MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)
                                                       ), 0, 8)
             self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
@@ -214,48 +218,80 @@ class UI:
             self.drawPlayer2(turn=True)
 
     def isGameEnd(self):
-        if self.chessBoard.is_checkmate():
-            if self.chessBoard.turn:
-                print("Checkmate : Black Won.")
-            else:
-                print("Checkmate : White Won.")
+        if 1:
+            if self.chessBoard.is_checkmate():
+                if self.chessBoard.turn:
+                    self.showDialog("Checkmate*Black Won !", pBtn=("New Game", self.newGame),
+                                    nBtn=("Analyse", self.analyse))
+                    print("Checkmate : Black Won.")
+                else:
+                    self.showDialog("Checkmate*White Won !", pBtn=("New Game", self.newGame),
+                                    nBtn=("Analyse", self.analyse))
+                    print("Checkmate : White Won.")
 
-        elif self.chessBoard.draw_by_threefold_repetition():
-            print("Draw by three fold Repetition.")
-        elif self.chessBoard.draw_by_insufficient_material():
-            print("Draw by insufficient material.")
-        elif self.chessBoard.draw_by_stalemate():
-            print("Draw by stalemate.")
-        elif self.chessBoard.win_by_resignation():
-            if self.chessBoard.winner == CHESS_BLACK:
-                print("Black won by resignation.")
+            elif self.chessBoard.draw_by_threefold_repetition():
+                self.showDialog("Game drawn by*Threefold repetition !", pBtn=("New Game", self.newGame),
+                                nBtn=("Analyse", self.analyse))
+                print("Draw by three fold Repetition.")
+            elif self.chessBoard.draw_by_insufficient_material():
+                self.showDialog("Game drawn by*Insufficient material !", pBtn=("New Game", self.newGame),
+                                nBtn=("Analyse", self.analyse))
+                print("Draw by insufficient material.")
+            elif self.chessBoard.draw_by_stalemate():
+                self.showDialog("Game drawn by*Stalemate !", pBtn=("New Game", self.newGame),
+                                nBtn=("Analyse", self.analyse))
+                print("Draw by stalemate.")
+            elif self.chessBoard.win_by_resignation():
+                if self.chessBoard.winner == CHESS_BLACK:
+                    self.showDialog("Resignation*Black won !", pBtn=("New Game", self.newGame),
+                                    nBtn=("Analyse", self.analyse))
+                    print("Black won by resignation.")
+                else:
+                    self.showDialog("Resignation*White won !", pBtn=("New Game", self.newGame),
+                                    nBtn=("Analyse", self.analyse))
+                    print("White won by resignation.")
+            elif self.chessBoard.draw_accepted:
+                self.showDialog("Game drawn !*Draw accepted.", pBtn=("New Game", self.newGame),
+                                nBtn=("Analyse", self.analyse))
+                print("Draw Accepted.")
             else:
-                print("White won by resignation.")
-        elif self.chessBoard.draw_accepted:
-            print("Draw Accepted.")
-        else:
+                return False
             return False
-        return True
 
     def drawEvalBar(self):
+        if self.analysis:
+            pygame.draw.rect(self.win, BorderColor, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
+            # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
+            yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
+            self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
+                          padding + 9, CHESS_BLACK, centre=True)
+            self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
+                          HEIGHT - padding - 9, CHESS_WHITE, centre=True)
+            DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
+            pygame.draw.rect(self.win, CHESS_BLACK, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
+            pygame.draw.rect(self.win, CHESS_WHITE,
+                             (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))
 
-        pygame.draw.rect(self.win, BorderColor, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
-        # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
-        yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
-        # self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-        # padding + 9, CHESS_BLACK, centre=True)
-        # self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-        # HEIGHT - padding - 9, CHESS_WHITE, centre=True)
-
-        DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
-        pygame.draw.rect(self.win, CHESS_BLACK, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
-        pygame.draw.rect(self.win, CHESS_WHITE,
-                         (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))
-        pass
+    def drawEvaluationText(self):
+        if self.analysis:
+            pygame.draw.rect(self.win, EvalTxtBackColor, (EvalTxtStartX, EvalTxtStartY, EvalTxtLenX, EvalTxtLenY))
 
     def drawFEN(self):
-        pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
-        pass
+        X, Y, lenX, lenY = FENStartX, FENStartY, FENLenX, FENLenY
+        if self.analysis:
+            X += EvalBarLenX - padding
+            lenX -= EvalBarLenX - padding
+            Y += EvalTxtLenY
+            lenY -= EvalTxtLenY
+        pygame.draw.rect(self.win, FENColor, (X, Y, lenX, lenY))
+
+    def analyse(self):
+        self.removeDialog()
+        self.analysis = True
+
+    def newGame(self):
+        self.chessBoard.__init__(self.chessBoard.Board_type)
+        self.__init__(self.win, self.chessBoard, self.p1Name, self.p2Name, self.p1Rating, self.p2Rating)
 
     def menuClick(self, pos):
         row, col = pos
@@ -282,6 +318,11 @@ class UI:
                     self.showDialog("Do you really want to quit?*The game will be saved.",
                                     pBtn=("Yes", self.saveAndQuit), nBtn=("No", self.doNothing))
 
+                # New Game.
+                if Y < col < Y + MenuBtnHeight:
+                    self.showDialog('Do you really want to*start a new game?', pBtn=('Yes', self.newGame),
+                                    nBtn=('No', self.doNothing))
+                Y += btnPadding + MenuBtnHeight
                 # Game saved.
                 if Y < col < Y + MenuBtnHeight:
                     self.chessBoard.save_board()
@@ -465,7 +506,7 @@ class UI:
     def dialogClick(self, pos):
         if self.dialog.pBtn and pygame.Rect.collidepoint(self.dialog.pBtnRect, pos):
             self.dialog.pBtn[1]()
-        if self.dialog.nBtn and pygame.Rect.collidepoint(self.dialog.nBtnRect, pos):
+        elif self.dialog.nBtn and pygame.Rect.collidepoint(self.dialog.nBtnRect, pos):
             self.dialog.nBtn[1]()
         self.removeDialog()
 

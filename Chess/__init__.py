@@ -43,6 +43,8 @@ class chessBoard:
 
         # Winning percentage of white
         self.win_percent = 50
+        self.p1_adv = "0.00"
+        self.p2_adv = "-0.00"
 
         self.moveList = []
         self.poppedMoveList = []

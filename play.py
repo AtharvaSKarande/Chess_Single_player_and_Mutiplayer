@@ -19,7 +19,7 @@ class Play:
         running = True
         clock = pygame.time.Clock()
         self.assignChessBoard()
-        displayUI = UI(win, self.chessBoard, 'English')
+        displayUI = UI(win, self.chessBoard)
         displayUI.drawDisplay()
 
         while running:
@@ -39,9 +39,11 @@ class Play:
                         else:
                             displayUI.click(pos)
 
-            if displayUI.isGameEnd():
-                self.delete_saved_board()
-                running = False
+            # if displayUI.isGameEnd():
+                # self.delete_saved_board()
+                # running = False
+        if displayUI.analysis:
+            self.delete_saved_board()
         pygame.quit()
 
     def assignChessBoard(self):

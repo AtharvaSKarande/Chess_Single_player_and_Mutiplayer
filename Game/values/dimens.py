@@ -6,7 +6,7 @@ info = pygame.display.Info()
 WIDTH, HEIGHT = int(info.current_w), int(info.current_h * 0.92)
 
 btnPadding = 15
-padding = 15
+padding = 10
 dialogPad = padding//2
 
 coordinates = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
@@ -31,9 +31,9 @@ MenuLenY = HEIGHT - TitleLenY - int(HEIGHT * 0.3)
 
 # Menu Buttons
 
-MenuBtnLeftPad = 35
-MenuBtnFntSize = 28
-MenuBtnHeight = 36
+MenuBtnLeftPad = 50
+MenuBtnFntSize = 25
+MenuBtnHeight = 32
 MenuBtnWidth = TitleLenX - 2 * MenuBtnLeftPad
 ArrowBtnLenX = SquareDimen//2
 ArrowBtnLenY = SquareDimen//2
@@ -56,15 +56,21 @@ P2StartY = int(HEIGHT * 0.85)
 P2LenX = TitleLenX
 P2LenY = int(HEIGHT * 0.16)
 
-# Evaluation Bar (Temporarily, eval bar is not displayed.)
+# Evaluation Bar (Only visible during analysis.)
 EvalBarStartX = BoardStartX + BoardLenX - padding
 EvalBarStartY = 0
 EvalBarWidth = 25
-EvalBarLenX = padding     # 16 + EvalBarWidth + 16
+EvalBarLenX = padding + EvalBarWidth + padding
 EvalBarLenY = HEIGHT
 
+# Displays user's move and best move
+EvalTxtStartX = EvalBarStartX + EvalBarLenX
+EvalTxtStartY = 0
+EvalTxtLenX = WIDTH - EvalBarStartX - EvalBarLenX
+EvalTxtLenY = padding + 2*SquareDimen
+
 # Previous moves tab
-FENStartX = EvalBarStartX + EvalBarLenX
+FENStartX = EvalBarStartX + padding
 FENStartY = 0
 FENLenX = WIDTH - FENStartX
 FENLenY = HEIGHT

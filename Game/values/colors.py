@@ -8,6 +8,8 @@ MenuBtnTextColor = (0, 0, 0)
 
 BorderColor = (50, 50, 50)
 CheckColor = (255, 0, 0)
+
+EvalTxtBackColor = CHESS_WHITE
 FENColor = CHESS_BLACK
 
 turnColor = (0, 225, 0)
