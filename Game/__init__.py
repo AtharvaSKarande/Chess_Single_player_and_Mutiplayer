@@ -23,7 +23,7 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard, vsAI=False, aiColor=CHESS_BLACK, p1Name="Player 1", p2Name="Player 2",
+    def __init__(self, win, chessBoard, vsAI=True, aiColor=CHESS_WHITE, p1Name="Player 1", p2Name="Player 2",
                  p1Rating="P1", p2Rating="P2"):
 
         self.running = True
@@ -39,6 +39,7 @@ class UI:
 
         self.vsAI = vsAI
         self.aiColor = aiColor
+
         self.analysis = False
 
         self.p1Name = p1Name
@@ -214,11 +215,10 @@ class UI:
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_WHITE:
-            self.drawText("Chess Bot", 36, P1StartX + 3 * pad + SquareDimen,
-                          P1StartY + (padding + SquareDimen) // 2,
-                          CHESS_BLACK, centre='Y', font=gameFontBold)
+            self.drawText("Chess Bot", 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding, CHESS_BLACK,
+                          font=gameFontBold)
             if turn:
-                self.drawText('I am thinking...', 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
+                self.drawText('I am thinking...', 26, P1StartX + 3 * pad + SquareDimen, P1StartY + 0.7 * SquareDimen,
                               RatingFC, RatingBC, font=gameFontBold)
         else:
             self.drawText(self.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
@@ -236,11 +236,10 @@ class UI:
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_BLACK:
-            self.drawText("Chess Bot", 36, P2StartX + 3 * pad + SquareDimen,
-                          P2StartY + (padding + SquareDimen) // 2,
-                          CHESS_WHITE, centre='Y', font=gameFontBold)
+            self.drawText("Chess Bot", 36, P2StartX + 3 * pad + SquareDimen, P2StartY + padding, CHESS_WHITE,
+                          font=gameFontBold)
             if turn:
-                self.drawText('I am thinking...', 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
+                self.drawText('I am thinking...', 26, P2StartX + 3 * pad + SquareDimen, P2StartY + 0.7 * SquareDimen,
                               RatingFC, RatingBC, font=gameFontBold)
         else:
             self.drawText(self.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
@@ -398,10 +397,10 @@ class UI:
                     if Y < col < Y + MenuBtnHeight:
                         if self.vsAI:
                             self.showDialog("Do you want to continue*the game with the friend?",
-                                            pBtn=("Yes", self.switchPlayer2), nBtn=("No", self.doNothing))
+                                            pBtn=("Yes", self.switchPlayerAndAI), nBtn=("No", self.doNothing))
                         else:
                             self.showDialog("Do you want to continue*the game with the bot?",
-                                            pBtn=("Yes", self.switchPlayer2), nBtn=("No", self.doNothing))
+                                            pBtn=("Yes", self.switchPlayerAndAI), nBtn=("No", self.doNothing))
                     Y += btnPadding + MenuBtnHeight
 
                     # Request draw.
@@ -431,12 +430,24 @@ class UI:
                     if Y < col < Y + MenuBtnHeight:
                         print("Settings not implemented.")
 
-    def switchPlayer2(self):
-        self.vsAI = not self.vsAI
-        if self.chessBoard.turn:
-            self.aiColor = CHESS_BLACK
+    def switchPlayerAndAI(self):
+        message = "*Switching "
+        if self.vsAI:
+            self.aiColor = None
+            if self.chessBoard.turn:
+                message += "Chess Bot*with " + self.p2Name + "!"
+            else:
+                message += "Chess Bot*with " + self.p1Name + "!"
         else:
-            self.aiColor = CHESS_WHITE
+            if self.chessBoard.turn:
+                self.aiColor = CHESS_BLACK
+                message += self.p2Name + "*with Chess Bot !"
+            else:
+                self.aiColor = CHESS_WHITE
+                message += self.p1Name + "*with Chess Bot !"
+        self.vsAI = not self.vsAI
+
+        self.showDialog(message)
 
     def click(self, pos):
         pos = getBoardRowColFromPos(pos)
@@ -481,6 +492,10 @@ class UI:
                     self.chessBoard.move(self.castleLoc[(row, col)])
             else:
                 return
+
+        # Selecting AIs pieces is not allowed.
+        elif clickedPiece.color == self.aiColor and not self.selectedPiece:
+            return
 
         # Clicked piece is of opponent's color.
         elif clickedPiece.color != my_color:
@@ -594,7 +609,7 @@ class UI:
     def doNothing(self):
         pass
 
-    def showDialog(self, text, winTitle="Chess", pBtn=None, nBtn=None, sleepTime=0.5):
+    def showDialog(self, text, winTitle="Chess", pBtn=None, nBtn=None, sleepTime=1):
         self.dialog = AlertDialog(self.win, text, winTitle, pBtn, nBtn)
         self.dialog.show()
         if pBtn == nBtn is None:
