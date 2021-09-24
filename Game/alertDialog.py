@@ -1,5 +1,5 @@
 from .values.dimens import *
-from .values.colors import CHESS_WHITE
+from .values.colors import CHESS_WHITE, AlertDialogBG, AlertDialogFG
 from .values.assets import gameFont
 
 
@@ -14,10 +14,10 @@ class AlertDialog:
         self.nBtnRect = None
 
     def show(self):
-        pygame.draw.rect(self.win, (100, 100, 100), ((AlertDialogStartX, AlertDialogStartY),
+        pygame.draw.rect(self.win, AlertDialogBG, ((AlertDialogStartX, AlertDialogStartY),
                                                      (AlertDialogLenX, AlertDialogLenY)),
                          border_radius=DialogTitleHeight//2)
-        pygame.draw.rect(self.win, (150, 150, 150),
+        pygame.draw.rect(self.win, AlertDialogFG,
                          ((DialogInX, DialogInY), (DialogInLenX, DialogInLenY)),
                          border_bottom_left_radius=DialogTitleHeight//2,
                          border_bottom_right_radius=DialogTitleHeight//2)
@@ -39,12 +39,12 @@ class AlertDialog:
         btnLenY = int(DialogInLenY*0.2)
         btnY = DialogInY + int(0.7*DialogInLenY)
         if self.nBtn:
-            btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 10*(len(self.nBtn)+2)))
+            btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 30*(len(self.nBtn)+2)))
             self.nBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX, btnY), (btnLenX, btnLenY)),
                                              border_radius=15)
             self.drawText(self.nBtn[0], 20, btnX+btnLenX//2, btnY+btnLenY//2, (0, 0, 0), centre=True)
         if self.pBtn:
-            btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 10*(len(self.pBtn)+2)))
+            btnLenX = min(int(1.5*SquareDimen), max(SquareDimen, 30*(len(self.pBtn)+2)))
             self.pBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX + DialogInLenX//2, btnY),
                                                                      (btnLenX, btnLenY)), border_radius=15)
             self.drawText(self.pBtn[0], 20, btnX + DialogInLenX//2 + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0),

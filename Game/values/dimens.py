@@ -6,7 +6,7 @@ info = pygame.display.Info()
 WIDTH, HEIGHT = int(info.current_w), int(info.current_h * 0.92)
 
 btnPadding = 15
-padding = 10
+padding = 15
 dialogPad = padding//2
 
 coordinates = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
@@ -64,14 +64,14 @@ EvalBarLenX = padding + EvalBarWidth + padding
 EvalBarLenY = HEIGHT
 
 # Displays user's move and best move
-EvalTxtStartX = EvalBarStartX + EvalBarLenX
-EvalTxtStartY = 0
-EvalTxtLenX = WIDTH - EvalBarStartX - EvalBarLenX
-EvalTxtLenY = padding + 2*SquareDimen
+InfoStartX = EvalBarStartX + EvalBarLenX
+InfoStartY = 0
+InfoLenX = WIDTH - EvalBarStartX - EvalBarLenX
+InfoLenY = padding + 2*SquareDimen
 
 # Previous moves tab
-FENStartX = EvalBarStartX + padding
-FENStartY = 0
+FENStartX = EvalBarStartX + EvalBarLenX
+FENStartY = InfoStartY + InfoLenY
 FENLenX = WIDTH - FENStartX
 FENLenY = HEIGHT
 

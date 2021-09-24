@@ -1,50 +1,48 @@
+import os
 import pickle
 
-import pygame
-import os
 import Chess
 from Game import UI
-from Game.values.dimens import WIDTH, HEIGHT, TitleLenX
+from Game.values.dimens import *
 from Game.values.string import brdFileName
 
 FPS = 60
 win = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption('Chess: Single player and Multiplayer')
 
+
 class Play:
     def __init__(self):
         self.chessBoard = None
+        self.displayUI = None
 
     def start(self):
-        running = True
         clock = pygame.time.Clock()
         self.assignChessBoard()
-        displayUI = UI(win, self.chessBoard)
-        displayUI.drawDisplay()
 
-        while running:
+        self.displayUI = UI(win, self.chessBoard)
+        self.displayUI.listview.setOnItemSelected(self.OnItemClick)
+        self.displayUI.drawDisplay()
+
+        while self.displayUI.running:
             clock.tick(FPS)
             for event in pygame.event.get():
+                self.displayUI.listview.eventHandler(event)
 
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.displayUI.running = False
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    if displayUI.dialog:
-                        displayUI.dialogClick(pos)
+                    if self.displayUI.dialog:
+                        self.displayUI.dialogClick(pos)
                     else:
                         if pos[0] < TitleLenX:
-                            displayUI.menuClick(pos)
+                            self.displayUI.menuClick(pos)
                         else:
-                            displayUI.click(pos)
+                            self.displayUI.click(pos)
 
-            # if displayUI.isGameEnd():
-                # self.delete_saved_board()
-                # running = False
-        if displayUI.analysis:
-            self.delete_saved_board()
-        pygame.quit()
+        self.displayUI.quit()
 
     def assignChessBoard(self):
         if os.path.exists(brdFileName):
@@ -53,10 +51,20 @@ class Play:
         else:
             self.chessBoard = Chess.chessBoard()
 
-    def delete_saved_board(self):
-        if os.path.exists(brdFileName):
-            os.remove(brdFileName)
-            self.chessBoard = None
+    def OnItemClick(self, x, y, W, Ih, pos):
+        if W / 6 < x < W / 6 + 70:
+            pos = 2 * pos
+            length = len(self.chessBoard.moveList)
+            for hold in range(pos, length - 1):
+                self.chessBoard.move_back()
+            self.displayUI.updateBoard()
+
+        elif W / 2 < x < W / 2 + 70:
+            pos = 2 * pos + 1
+            length = len(self.chessBoard.moveList)
+            for hold in range(pos, length - 1):
+                self.chessBoard.move_back()
+            self.displayUI.updateBoard()
 
 
 if __name__ == "__main__":
