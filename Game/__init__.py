@@ -23,7 +23,7 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard, vsAI=True, aiColor=CHESS_WHITE, p1Name="Player 1", p2Name="Player 2",
+    def __init__(self, win, chessBoard, vsAI, aiColor, p1Name="Player 1", p2Name="Player 2",
                  p1Rating="P1", p2Rating="P2"):
 
         self.running = True
@@ -39,6 +39,14 @@ class UI:
 
         self.vsAI = vsAI
         self.aiColor = aiColor
+        self.aiMove = None
+
+        self.aiStarted = None
+        self.aiTurn = None
+        if aiColor == CHESS_WHITE:
+            self.aiTurn = True
+        elif aiColor == CHESS_BLACK:
+            self.aiTurn = False
 
         self.analysis = False
 
@@ -359,11 +367,15 @@ class UI:
             if 0 < col - MenuStartY - btnPadding < ArrowBtnLenY:
                 if centre - btnPadding - ArrowBtnLenX < row < centre - btnPadding:
                     self.clearUIMoves()
+                    if self.vsAI and not self.analysis:
+                        self.chessBoard.move_back()
                     self.chessBoard.move_back()
                     self.updateBoard()
 
                 elif 0 < row - centre - btnPadding < ArrowBtnLenX:
                     self.clearUIMoves()
+                    if self.vsAI and not self.analysis:
+                        self.chessBoard.move()
                     self.chessBoard.move()
                     self.updateBoard()
             Y = MenuStartY + btnPadding * 3 + MenuBtnHeight
@@ -431,6 +443,7 @@ class UI:
                         print("Settings not implemented.")
 
     def switchPlayerAndAI(self):
+        # Ai started parameter is handled in while loop of play.py
         message = "*Switching "
         if self.vsAI:
             self.aiColor = None
@@ -441,13 +454,19 @@ class UI:
         else:
             if self.chessBoard.turn:
                 self.aiColor = CHESS_BLACK
+                self.aiTurn = False
                 message += self.p2Name + "*with Chess Bot !"
             else:
                 self.aiColor = CHESS_WHITE
+                self.aiTurn = True
                 message += self.p1Name + "*with Chess Bot !"
         self.vsAI = not self.vsAI
 
         self.showDialog(message)
+
+    def playAiMove(self, move):
+        self.chessBoard.move(move)
+        self.updateBoard()
 
     def click(self, pos):
         pos = getBoardRowColFromPos(pos)

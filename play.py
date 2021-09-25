@@ -3,6 +3,8 @@ import pickle
 
 import Chess
 from Game import UI
+from ChessAI import AI
+from Game.values.colors import CHESS_BLACK
 from Game.values.dimens import *
 from Game.values.string import brdFileName
 
@@ -15,12 +17,13 @@ class Play:
     def __init__(self):
         self.chessBoard = None
         self.displayUI = None
+        self.ai = None
 
-    def start(self):
+    def start(self, vsAI, aiColor):
         clock = pygame.time.Clock()
         self.assignChessBoard()
 
-        self.displayUI = UI(win, self.chessBoard)
+        self.displayUI = UI(win, self.chessBoard, vsAI=vsAI, aiColor=aiColor)
         self.displayUI.listview.setOnItemSelected(self.OnItemClick)
         self.displayUI.drawDisplay()
 
@@ -41,6 +44,26 @@ class Play:
                             self.displayUI.menuClick(pos)
                         else:
                             self.displayUI.click(pos)
+
+            if self.displayUI.vsAI and self.displayUI.aiMove and \
+                    self.displayUI.chessBoard.turn == self.displayUI.aiTurn:
+                # Move taken from AI.
+                self.displayUI.playAiMove(self.displayUI.aiMove)
+                self.displayUI.aiMove = None
+                self.displayUI.aiStarted = False
+
+            if self.displayUI.vsAI and not self.displayUI.aiStarted and self.displayUI.running and \
+                    self.displayUI.aiTurn == self.displayUI.chessBoard.turn and \
+                    self.displayUI.aiMove is None and not self.displayUI.analysis:
+                # Start AI thread.
+                self.displayUI.aiStarted = True
+                self.ai = AI(self.displayUI)
+                self.ai.start()
+
+            if not self.displayUI.vsAI and self.displayUI.aiStarted:
+                # Stop AI thread.
+                self.displayUI.aiStarted = False
+                self.ai.join()
 
         self.displayUI.quit()
 
@@ -69,4 +92,4 @@ class Play:
 
 if __name__ == "__main__":
     playGame = Play()
-    playGame.start()
+    playGame.start(vsAI=True, aiColor=CHESS_BLACK)

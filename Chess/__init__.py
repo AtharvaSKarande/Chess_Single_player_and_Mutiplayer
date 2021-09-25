@@ -794,9 +794,11 @@ class chessBoard:
                         validMoves.extend(piece.get_valid_moves(self))
         return validMoves
 
-    # Use and Implementation remained.
-    def evaluate_advantage(self):
-        pass
+    def evaluate_advantage(self, color=CHESS_WHITE):
+        wScore, bScore = self.get_score()
+        if color == CHESS_WHITE:
+            return wScore - bScore
+        return bScore - wScore
 
     def get_score(self):
         whiteScore = 0
