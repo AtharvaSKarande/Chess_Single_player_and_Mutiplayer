@@ -1,4 +1,7 @@
 import threading
+import random
+import time
+
 from Game.values.colors import CHESS_BLACK, CHESS_WHITE
 
 class AI(threading.Thread):
@@ -7,8 +10,11 @@ class AI(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
+        depth = 4
         if self.ui.aiMove is None:
-            evaluation, self.ui.aiMove = self.minimax(3, self.ui.aiColor)
+            t = time.time()
+            evaluation, self.ui.aiMove = self.minimax(depth, self.ui.aiColor)
+            print(time.time()-t)
 
     def minimax(self, depth, aiColor, alpha=float('-inf'), beta=float('inf')):
         board = self.ui.chessBoard
@@ -24,6 +30,7 @@ class AI(threading.Thread):
             maxEval = float('-inf')
             best_move = None
             moveList = board.get_all_valid_moves(aiColor)
+            random.shuffle(moveList)
 
             for mv in moveList:
                 board.move(mv, debug=True)
@@ -45,6 +52,7 @@ class AI(threading.Thread):
             minEval = float('inf')
             best_move = None
             moveList = board.get_all_valid_moves(aiColor)
+            random.shuffle(moveList)
 
             for mv in moveList:
                 board.move(mv, debug=True)

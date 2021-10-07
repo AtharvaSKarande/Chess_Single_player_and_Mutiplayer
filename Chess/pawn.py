@@ -3,7 +3,7 @@ from .static import get_board_co_ord, is_valid_rc
 
 
 class Pawn:
-    Points = 1
+    Points = 2
 
     def __init__(self, row, col, color):
         self.row = row

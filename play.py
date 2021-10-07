@@ -74,6 +74,7 @@ class Play:
         else:
             self.chessBoard = Chess.chessBoard()
 
+    # noinspection PyUnusedLocal
     def OnItemClick(self, x, y, W, Ih, pos):
         if W / 6 < x < W / 6 + 70:
             pos = 2 * pos

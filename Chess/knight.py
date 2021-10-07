@@ -2,7 +2,7 @@ from Chess.static import get_board_co_ord, is_valid_rc
 from Game.values.colors import CHESS_WHITE
 
 class Knight:
-    Points = 3
+    Points = 6
 
     def __init__(self, row, col, color):
         self.row = row

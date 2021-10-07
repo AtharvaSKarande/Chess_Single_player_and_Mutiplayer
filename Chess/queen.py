@@ -2,7 +2,7 @@ from Chess.static import get_board_co_ord, is_valid_rc
 from Game.values.colors import CHESS_WHITE
 
 class Queen:
-    Points = 9
+    Points = 18
 
     def __init__(self, row, col, color):
         self.row = row

@@ -2,7 +2,7 @@ from Chess.static import get_board_co_ord, is_valid_rc
 from Game.values.colors import CHESS_WHITE
 
 class King:
-    Points = 0
+    Points = 1
 
     def __init__(self, row, col, color):
         self.row = row
