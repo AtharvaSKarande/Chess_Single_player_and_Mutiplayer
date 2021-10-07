@@ -796,6 +796,9 @@ class chessBoard:
 
     def evaluate_player_advantage(self, color=CHESS_WHITE):
         wScore, bScore = self.get_score()
+        self.p1_adv = str(round(wScore/(wScore+bScore), 2))
+        self.p2_adv = str(round(bScore/(wScore+bScore), 2))
+        self.win_percent = int(100 * wScore / (wScore+bScore))
         if color == CHESS_WHITE:
             return wScore - bScore
         return bScore - wScore

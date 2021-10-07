@@ -6,6 +6,8 @@ from Game.values.dimens import PieceDimen, TitleLenX, TitleLenY, HEIGHT, WIDTH, 
 gameFont = "Assets/product_sans_regular.ttf"
 gameFontBold = "Assets/product_sans_bold.ttf"
 
+brdFileName = 'saved_chess_board.pickle'
+
 # Pieces
 # 345, 148
 w = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)

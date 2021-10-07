@@ -1,23 +1,25 @@
 from .values.dimens import *
-from .values.colors import CHESS_WHITE, AlertDialogBG, AlertDialogFG
+from .values.colors import CHESS_WHITE
 from .values.assets import gameFont
 
 
 class AlertDialog:
-    def __init__(self, win, alertText, title='Chess', positiveBtn=None, negativeBtn=None):
+    def __init__(self, win, alertText, fgCLR, bgCLR, title='Chess', positiveBtn=None, negativeBtn=None):
         self.win = win
         self.alertText = alertText
         self.title = title
+        self.fgCLR = fgCLR
+        self.bgCLR = bgCLR
         self.pBtn = positiveBtn
         self.nBtn = negativeBtn
         self.pBtnRect = None
         self.nBtnRect = None
 
     def show(self):
-        pygame.draw.rect(self.win, AlertDialogBG, ((AlertDialogStartX, AlertDialogStartY),
-                                                   (AlertDialogLenX, AlertDialogLenY)),
+        pygame.draw.rect(self.win, self.bgCLR, ((AlertDialogStartX, AlertDialogStartY),
+                                                (AlertDialogLenX, AlertDialogLenY)),
                          border_radius=DialogTitleHeight // 2)
-        pygame.draw.rect(self.win, AlertDialogFG,
+        pygame.draw.rect(self.win, self.fgCLR,
                          ((DialogInX, DialogInY), (DialogInLenX, DialogInLenY)),
                          border_bottom_left_radius=DialogTitleHeight // 2,
                          border_bottom_right_radius=DialogTitleHeight // 2)

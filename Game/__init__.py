@@ -7,11 +7,11 @@ import pygame.display
 from Chess.static import get_row_col
 from ListView import ListView
 from fruit import Fruit
-from .values.colors import *
+from .theme import Theme
+from .values.colors import CHESS_WHITE, CHESS_BLACK
 from .values.dimens import *
 from .values.assets import *
 from .alertDialog import AlertDialog
-from .values.string import brdFileName
 
 
 def getBoardRowColFromPos(pos):
@@ -23,13 +23,13 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard, vsAI, aiColor, p1Name="Player 1", p2Name="Player 2",
-                 p1Rating="P1", p2Rating="P2"):
+    def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, p1Name, p2Name):
 
         self.running = True
 
         self.win = win
         self.chessBoard = chessBoard
+        self.theme = Theme(gameTheme)
         self.selectedPiece = None
         self.moveLoc = {}
         self.takesLoc = {}
@@ -52,12 +52,10 @@ class UI:
 
         self.p1Name = p1Name
         self.p2Name = p2Name
-        self.p1Rating = p1Rating
-        self.p2Rating = p2Rating
 
-        self.fruit = Fruit(self.chessBoard.moveList, BorderColor, 60, FENLenX - 40, 2, 2, 5)
+        self.fruit = Fruit(self.chessBoard.moveList, self.theme.borderCLR, 60, FENLenX - 40, 2, 2, 5)
         self.listview = ListView(FENStartX + 20, FENStartY + 50, FENLenX - 40, HEIGHT - FENStartY - 100,
-                                 self.fruit, CHESS_BLACK, CHESS_WHITE, 5, CHESS_BLACK, 3, win)
+                                 self.fruit, self.theme.darkCLR, self.theme.lightCLR, 5, self.theme.borderCLR, 3, win)
 
     def drawDisplay(self):
         # self.win.fill(MenuColor)
@@ -67,15 +65,15 @@ class UI:
     def updateBoard(self):
         self.drawTitle()
         self.drawMenu()
-        pygame.draw.rect(self.win, BorderColor, (BoardStartX, BoardStartY, BoardLenX, BoardLenY))
+        pygame.draw.rect(self.win, self.theme.borderCLR, (BoardStartX, BoardStartY, BoardLenX, BoardLenY))
         for i in range(8):
             for j in range(8):
                 x = BoardStartX + padding + j * SquareDimen
                 y = BoardStartY + padding + i * SquareDimen
                 if (i + j) % 2:
-                    pygame.draw.rect(self.win, CHESS_BLACK, ((x, y), (SquareDimen, SquareDimen)))
+                    pygame.draw.rect(self.win, self.theme.darkCLR, ((x, y), (SquareDimen, SquareDimen)))
                 else:
-                    pygame.draw.rect(self.win, CHESS_WHITE, ((x, y), (SquareDimen, SquareDimen)))
+                    pygame.draw.rect(self.win, self.theme.lightCLR, ((x, y), (SquareDimen, SquareDimen)))
 
         self.drawUIMoves()
         self.drawPieces()
@@ -89,23 +87,23 @@ class UI:
         pygame.display.update()
 
     def drawTitle(self):
-        pygame.draw.rect(self.win, CHESS_WHITE, ((TitleStartX, TitleStartY), (TitleLenX, TitleLenY)))
+        pygame.draw.rect(self.win, self.theme.lightCLR, ((TitleStartX, TitleStartY), (TitleLenX, TitleLenY)))
         self.win.blit(title, (TitleStartX, TitleStartY))
 
     def drawMenu(self):
-        pygame.draw.rect(self.win, MenuColor, ((MenuStartX, MenuStartY), (MenuLenX, MenuLenY)))
+        pygame.draw.rect(self.win, self.theme.menuCLR, ((MenuStartX, MenuStartY), (MenuLenX, MenuLenY)))
 
         txtX = (TitleStartX + TitleLenX) // 2
         txtY = MenuStartY + btnPadding * 3 + MenuBtnHeight
 
         if self.chessBoard.moveList:
-            pygame.draw.rect(self.win, CHESS_WHITE, (((txtX - btnPadding - ArrowBtnLenX, MenuStartY + btnPadding),
-                                                      (ArrowBtnLenX, ArrowBtnLenY))), 0, 8)
+            pygame.draw.rect(self.win, self.theme.lightCLR, (
+                (txtX - btnPadding - ArrowBtnLenX, MenuStartY + btnPadding), (ArrowBtnLenX, ArrowBtnLenY)), 0, 8)
             self.win.blit(BackArrow, (txtX - btnPadding - ArrowBtnLenX, MenuStartY + btnPadding))
 
         if self.chessBoard.poppedMoveList:
-            pygame.draw.rect(self.win, CHESS_WHITE, ((txtX + btnPadding, MenuStartY + btnPadding),
-                                                     (ArrowBtnLenX, ArrowBtnLenY)), 0, 8)
+            pygame.draw.rect(self.win, self.theme.lightCLR, ((txtX + btnPadding, MenuStartY + btnPadding),
+                                                             (ArrowBtnLenX, ArrowBtnLenY)), 0, 8)
 
             self.win.blit(ForwardArrow, (txtX + btnPadding, MenuStartY + btnPadding))
 
@@ -121,24 +119,24 @@ class UI:
             buttonList = ['New Game', 'Settings']
 
         for buttonTxt in buttonList:
-            pygame.draw.rect(self.win, MenuBtnColor, ((MenuStartX + MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)
-                                                      ), 0, 8)
-            self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
+            pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuStartX + MenuBtnLeftPad, txtY),
+                                                               (MenuBtnWidth, MenuBtnHeight)), 0, 8)
+            self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
             txtY += MenuBtnHeight + btnPadding
 
         # Placing Quit button at end.
         txtY = MenuStartY + MenuLenY - btnPadding - MenuBtnHeight
-        pygame.draw.rect(self.win, MenuBtnColor, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 8)
-        self.drawText('Quit', MenuBtnFntSize, txtX, txtY, MenuBtnTextColor, centre='X')
+        pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 8)
+        self.drawText('Quit', MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
         txtY += MenuBtnHeight + btnPadding
 
     def drawCoordinates(self):
         font = pygame.font.Font(gameFontBold, 20)
         for number in coordinates.keys():
             if number % 2:
-                clr = CHESS_WHITE
+                clr = self.theme.lightCLR
             else:
-                clr = CHESS_BLACK
+                clr = self.theme.darkCLR
 
             text = font.render(str(coordinates[number]), True, clr)
             textRect = text.get_rect()
@@ -169,16 +167,16 @@ class UI:
         Y = checkY + (SquareDimen - PieceDimen) // 2
 
         if piece == 'TAKE':
-            pygame.draw.circle(self.win, TakeColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+            pygame.draw.circle(self.win, self.theme.takeCLR, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
                                SquareDimen // 2, 7)
         elif piece == 'MOVE':
-            pygame.draw.circle(self.win, MoveColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+            pygame.draw.circle(self.win, self.theme.moveCLR, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
                                SquareDimen // 9)
         elif piece == 'CASTLE':
-            pygame.draw.circle(self.win, CastleColor, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
+            pygame.draw.circle(self.win, self.theme.castleCLR, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
                                SquareDimen // 9)
         elif piece == 'SELECT':
-            pygame.draw.rect(self.win, SelectColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+            pygame.draw.rect(self.win, self.theme.selectCLR, ((checkX, checkY), (SquareDimen, SquareDimen)))
 
         elif piece == 'P':
             self.win.blit(WHITE_PAWN, (X, Y))
@@ -187,11 +185,11 @@ class UI:
 
         elif piece == 'K':
             if self.chessBoard.is_check() and self.chessBoard.turn:
-                pygame.draw.rect(self.win, CheckColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+                pygame.draw.rect(self.win, self.theme.checkCLR, ((checkX, checkY), (SquareDimen, SquareDimen)))
             self.win.blit(WHITE_KING, (X, Y))
         elif piece == 'k':
             if self.chessBoard.is_check() and not self.chessBoard.turn:
-                pygame.draw.rect(self.win, CheckColor, ((checkX, checkY), (SquareDimen, SquareDimen)))
+                pygame.draw.rect(self.win, self.theme.checkCLR, ((checkX, checkY), (SquareDimen, SquareDimen)))
             self.win.blit(BLACK_KING, (X, Y))
 
         elif piece == 'Q':
@@ -215,44 +213,46 @@ class UI:
             self.win.blit(BLACK_KNIGHT, (X, Y))
 
     def drawPlayer1(self, turn=False):
-        pygame.draw.rect(self.win, CHESS_WHITE, (P1StartX, P1StartY, P1LenX, P1LenY))
+        pygame.draw.rect(self.win, self.theme.lightCLR, (P1StartX, P1StartY, P1LenX, P1LenY))
         pad = int(P1LenY * 0.1)
         if turn:
-            pygame.draw.rect(self.win, turnColor, (P1StartX, P1StartY, P1LenY, P1LenY))
-        pygame.draw.rect(self.win, CHESS_BLACK, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
+            pygame.draw.rect(self.win, self.theme.turnCLR, (P1StartX, P1StartY, P1LenY, P1LenY))
+        pygame.draw.rect(self.win, self.theme.darkCLR, (P1StartX + pad, P1StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_WHITE:
-            self.drawText("Chess Bot", 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding, CHESS_BLACK,
+            self.drawText("Chess Bot", 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding, self.theme.darkCLR,
                           font=gameFontBold)
             if turn:
                 self.drawText('I am thinking...', 26, P1StartX + 3 * pad + SquareDimen, P1StartY + 0.7 * SquareDimen,
-                              RatingFC, RatingBC, font=gameFontBold)
+                              self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR, font=gameFontBold)
         else:
             self.drawText(self.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
                           P1StartY + (padding + SquareDimen) // 2,
-                          CHESS_BLACK, centre='Y', font=gameFontBold)
+                          self.theme.darkCLR, centre='Y', font=gameFontBold)
+
         # self.drawText(self.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
     def drawPlayer2(self, turn=False):
-        pygame.draw.rect(self.win, CHESS_BLACK, (P2StartX, P2StartY, P2LenX, P2LenY))
+        pygame.draw.rect(self.win, self.theme.darkCLR, (P2StartX, P2StartY, P2LenX, P2LenY))
         pad = int(P2LenY * 0.1)
         if turn:
-            pygame.draw.rect(self.win, turnColor, (P2StartX, P2StartY, P1LenY, P1LenY))
-        pygame.draw.rect(self.win, CHESS_WHITE, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
+            pygame.draw.rect(self.win, self.theme.turnCLR, (P2StartX, P2StartY, P1LenY, P1LenY))
+        pygame.draw.rect(self.win, self.theme.lightCLR, (P2StartX + pad, P2StartY + pad, SquareDimen, SquareDimen))
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_BLACK:
-            self.drawText("Chess Bot", 36, P2StartX + 3 * pad + SquareDimen, P2StartY + padding, CHESS_WHITE,
+            self.drawText("Chess Bot", 36, P2StartX + 3 * pad + SquareDimen, P2StartY + padding, self.theme.lightCLR,
                           font=gameFontBold)
             if turn:
                 self.drawText('I am thinking...', 26, P2StartX + 3 * pad + SquareDimen, P2StartY + 0.7 * SquareDimen,
-                              RatingFC, RatingBC, font=gameFontBold)
+                              self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR, font=gameFontBold)
         else:
             self.drawText(self.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
                           P2StartY + (padding + SquareDimen) // 2,
-                          CHESS_WHITE, centre='Y', font=gameFontBold)
+                          self.theme.lightCLR, centre='Y', font=gameFontBold)
+
         # self.drawText(self.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
 
@@ -315,29 +315,30 @@ class UI:
 
     def drawEvalBar(self):
         if self.analysis:
-            pygame.draw.rect(self.win, BorderColor, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
+            pygame.draw.rect(self.win, self.theme.borderCLR, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
             # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
             yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
             self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                          padding + 9, CHESS_BLACK, centre=True)
+                          padding + 9, self.theme.darkCLR, centre=True)
             self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                          HEIGHT - padding - 9, CHESS_WHITE, centre=True)
+                          HEIGHT - padding - 9, self.theme.lightCLR, centre=True)
             DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
-            pygame.draw.rect(self.win, CHESS_BLACK, (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
-            pygame.draw.rect(self.win, CHESS_WHITE,
+            pygame.draw.rect(self.win, self.theme.darkCLR,
+                             (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
+            pygame.draw.rect(self.win, self.theme.lightCLR,
                              (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))
         else:
-            pygame.draw.rect(self.win, CHESS_BLACK,
+            pygame.draw.rect(self.win, self.theme.darkCLR,
                              (EvalBarStartX + padding, EvalBarStartY, EvalBarLenX - padding, EvalBarLenY))
 
     def drawInformation(self):
         if self.analysis:
-            pygame.draw.rect(self.win, CHESS_BLACK, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
+            pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
         else:
-            pygame.draw.rect(self.win, CHESS_BLACK, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
+            pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 
     def drawFEN(self):
-        pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
+        pygame.draw.rect(self.win, self.theme.fenCLR, (FENStartX, FENStartY, FENLenX, FENLenY))
         whiteMoveList = []
         blackMoveList = []
         for x in range(len(self.chessBoard.moveList)):
@@ -346,7 +347,7 @@ class UI:
             else:
                 blackMoveList.append(self.chessBoard.moveList[x])
 
-        pygame.draw.rect(self.win, FENColor, (FENStartX, FENStartY, FENLenX, FENLenY))
+        pygame.draw.rect(self.win, self.theme.fenCLR, (FENStartX, FENStartY, FENLenX, FENLenY))
         self.fruit.updatemainList(blackMoveList)
         self.fruit.UpdateData(whiteMoveList)
 
@@ -355,8 +356,7 @@ class UI:
 
     def newGame(self):
         self.chessBoard.__init__(self.chessBoard.Board_type)
-        self.__init__(self.win, self.chessBoard, self.vsAI, self.aiColor, self.p1Name, self.p2Name, self.p1Rating,
-                      self.p2Rating)
+        self.__init__(self.win, self.chessBoard, self.vsAI, self.aiColor, self.theme.title, self.p1Name, self.p2Name)
 
     def menuClick(self, pos):
         row, col = pos
@@ -583,7 +583,7 @@ class UI:
         if self.promotionMove:
             X = BoardStartX + padding + 3 * SquareDimen
             Y = BoardStartY + padding + 3 * SquareDimen
-            pygame.draw.rect(self.win, promotionColor, (X, Y, 2 * SquareDimen, 2 * SquareDimen))
+            pygame.draw.rect(self.win, self.theme.promotionCLR, (X, Y, 2 * SquareDimen, 2 * SquareDimen))
             if self.chessBoard.turn:
                 self.showPiece('Q', 4, 3)
                 self.showPiece('R', 4, 4)
@@ -629,7 +629,7 @@ class UI:
         pass
 
     def showDialog(self, text, winTitle="Chess", pBtn=None, nBtn=None, sleepTime=1):
-        self.dialog = AlertDialog(self.win, text, winTitle, pBtn, nBtn)
+        self.dialog = AlertDialog(self.win, text, self.theme.alertFgCLR, self.theme.alertBgCLR, winTitle, pBtn, nBtn)
         self.dialog.show()
         if pBtn == nBtn is None:
             time.sleep(sleepTime)
@@ -644,7 +644,6 @@ class UI:
 
     def removeDialog(self):
         self.dialog = None
-        # Error can occur as objects are deleted when quit() is called.
         # noinspection PyBroadException
         try:
             self.updateBoard()

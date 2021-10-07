@@ -1,7 +1,7 @@
 # ChessBoard's colors
-CHESS_WHITE = (238, 238, 210)   # (240, 217, 181)
-CHESS_BLACK = (118, 150, 86)    # (181, 136, 99)
-
+CHESS_WHITE = (255, 255, 255)   # (238, 238, 210)   # (240, 217, 181)
+CHESS_BLACK = (0, 0, 0)     # (118, 150, 86)    # (181, 136, 99)
+"""
 MenuColor = CHESS_BLACK
 MenuBtnColor = CHESS_WHITE
 MenuBtnTextColor = (0, 0, 0)
@@ -24,4 +24,4 @@ SelectColor = (200, 255, 0)
 promotionColor = (100, 100, 255)
 
 AlertDialogFG = (150, 150, 150)
-AlertDialogBG = (100, 100, 100)
+AlertDialogBG = (100, 100, 100)"""
