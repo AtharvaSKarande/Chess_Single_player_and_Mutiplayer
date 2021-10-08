@@ -32,8 +32,7 @@ MenuLenY = HEIGHT - TitleLenY - int(HEIGHT * 0.3)
 # Menu Buttons
 
 MenuBtnLeftPad = 50
-MenuBtnFntSize = 25
-MenuBtnHeight = 32
+MenuBtnHeight = 35
 MenuBtnWidth = TitleLenX - 2 * MenuBtnLeftPad
 ArrowBtnLenX = SquareDimen//2
 ArrowBtnLenY = SquareDimen//2

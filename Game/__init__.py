@@ -7,7 +7,7 @@ import pygame.display
 from Chess.static import get_row_col
 from ListView import ListView
 from fruit import Fruit
-from Game.utils import Theme, Language
+from Game.utils import Theme, Language, FontSizes
 from .values.colors import CHESS_WHITE, CHESS_BLACK
 from .values.dimens import *
 from .values.assets import *
@@ -31,6 +31,7 @@ class UI:
         self.chessBoard = chessBoard
         self.theme = Theme(gameTheme)
         self.txt = Language(gameLang)
+        self.sizes = FontSizes(gameLang)
         self.selectedPiece = None
         self.moveLoc = {}
         self.takesLoc = {}
@@ -124,17 +125,17 @@ class UI:
         for buttonTxt in buttonList:
             pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuStartX + MenuBtnLeftPad, txtY),
                                                                (MenuBtnWidth, MenuBtnHeight)), 0, 8)
-            self.drawText(buttonTxt, MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
+            self.drawText(buttonTxt, self.sizes.menu_btn_size, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
             txtY += MenuBtnHeight + btnPadding
 
         # Placing Quit button at end.
         txtY = MenuStartY + MenuLenY - btnPadding - MenuBtnHeight
         pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 8)
-        self.drawText(self.txt.quit, MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
+        self.drawText(self.txt.quit, self.sizes.menu_btn_size, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
         txtY += MenuBtnHeight + btnPadding
 
     def drawCoordinates(self):
-        font = pygame.font.Font(self.txt.fontBold, 20)
+        font = pygame.font.Font(self.txt.coordFont, 20)
         for number in coordinates.keys():
             if number % 2:
                 clr = self.theme.lightCLR
@@ -224,14 +225,14 @@ class UI:
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_WHITE:
-            self.drawText(self.txt.chess_bot, 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding,
-                          self.theme.darkCLR, font=self.txt.fontBold)
+            self.drawText(self.txt.chess_bot, self.sizes.player_name, P1StartX + 3 * pad + SquareDimen,
+                          P1StartY + padding, self.theme.darkCLR, font=self.txt.fontBold)
             if turn:
-                self.drawText(self.txt.i_am_thinking, 26, P1StartX + 3 * pad + SquareDimen,
+                self.drawText(self.txt.i_am_thinking, self.sizes.think_msg, P1StartX + 3 * pad + SquareDimen,
                               P1StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
                               font=self.txt.fontBold)
         else:
-            self.drawText(self.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
+            self.drawText(self.p1Name, self.sizes.player_name, P1StartX + 3 * pad + SquareDimen,
                           P1StartY + (padding + SquareDimen) // 2,
                           self.theme.darkCLR, centre='Y', font=self.txt.fontBold)
 
@@ -247,14 +248,14 @@ class UI:
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_BLACK:
-            self.drawText(self.txt.chess_bot, 36, P2StartX + 3 * pad + SquareDimen,
+            self.drawText(self.txt.chess_bot, self.sizes.player_name, P2StartX + 3 * pad + SquareDimen,
                           P2StartY + padding, self.theme.lightCLR, font=self.txt.fontBold)
             if turn:
-                self.drawText(self.txt.i_am_thinking, 26, P2StartX + 3 * pad + SquareDimen,
+                self.drawText(self.txt.i_am_thinking, self.sizes.think_msg, P2StartX + 3 * pad + SquareDimen,
                               P2StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
                               font=self.txt.fontBold)
         else:
-            self.drawText(self.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
+            self.drawText(self.p2Name, self.sizes.player_name, P2StartX + 3 * pad + SquareDimen,
                           P2StartY + (padding + SquareDimen) // 2,
                           self.theme.lightCLR, centre='Y', font=self.txt.fontBold)
 
@@ -322,16 +323,17 @@ class UI:
         if self.analysis:
             pygame.draw.rect(self.win, self.theme.borderCLR, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))
             # here, 18 = fontSize, 9 = fontSize/2, 27 = fontSize*(3/2)
-            yLen = HEIGHT - 2 * padding - 18 - 18 - 9 - 9
-            self.drawText(self.chessBoard.p2_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                          padding + 9, self.theme.darkCLR, centre=True)
-            self.drawText(self.chessBoard.p1_adv, 18, EvalBarStartX + EvalBarLenX // 2,
-                          HEIGHT - padding - 9, self.theme.lightCLR, centre=True)
+            s = self.sizes.coord
+            yLen = HEIGHT - 2 * padding - s - s - s//2 - s//2
+            self.drawText(self.chessBoard.p2_adv, s, EvalBarStartX + EvalBarLenX // 2,
+                          padding + s//2, self.theme.darkCLR, centre=True)
+            self.drawText(self.chessBoard.p1_adv, s, EvalBarStartX + EvalBarLenX // 2,
+                          HEIGHT - padding - s//2, self.theme.lightCLR, centre=True)
             DarkLen = int(yLen * (100 - self.chessBoard.win_percent) / 100)
             pygame.draw.rect(self.win, self.theme.darkCLR,
-                             (EvalBarStartX + padding, padding + 27, EvalBarWidth, DarkLen))
+                             (EvalBarStartX + padding, padding + s*3//2, EvalBarWidth, DarkLen))
             pygame.draw.rect(self.win, self.theme.lightCLR,
-                             (EvalBarStartX + padding, padding + 27 + DarkLen, EvalBarWidth, yLen - DarkLen))
+                             (EvalBarStartX + padding, padding + s*3//2 + DarkLen, EvalBarWidth, yLen - DarkLen))
         else:
             pygame.draw.rect(self.win, self.theme.darkCLR,
                              (EvalBarStartX + padding, EvalBarStartY, EvalBarLenX - padding, EvalBarLenY))
@@ -643,7 +645,7 @@ class UI:
         if winTitle is None:
             winTitle = self.txt.chess
         self.dialog = AlertDialog(self.win, text, self.theme.alertFgCLR, self.theme.alertBgCLR, self.txt.font,
-                                  winTitle, pBtn, nBtn)
+                                  winTitle, self.sizes.alert_sizes, pBtn, nBtn)
         self.dialog.show()
         if pBtn == nBtn is None:
             time.sleep(sleepTime)

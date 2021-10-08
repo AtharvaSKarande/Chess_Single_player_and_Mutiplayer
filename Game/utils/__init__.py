@@ -3,13 +3,14 @@ from Game.values.colors import CHESS_WHITE
 
 
 class AlertDialog:
-    def __init__(self, win, alertText, fgCLR, bgCLR, font, title='Chess', positiveBtn=None, negativeBtn=None):
+    def __init__(self, win, alertText, fgCLR, bgCLR, text_font, title, text_sizes, positiveBtn=None, negativeBtn=None):
         self.win = win
         self.alertText = alertText
         self.title = title
         self.fgCLR = fgCLR
         self.bgCLR = bgCLR
-        self.font = font
+        self.text_font = text_font
+        self.text_sizes = text_sizes
         self.pBtn = positiveBtn
         self.nBtn = negativeBtn
         self.pBtnRect = None
@@ -24,17 +25,18 @@ class AlertDialog:
                          border_bottom_left_radius=DialogTitleHeight // 2,
                          border_bottom_right_radius=DialogTitleHeight // 2)
 
-        self.drawText(self.title, 50, AlertDialogStartX + AlertDialogLenX // 2, AlertDialogStartY +
+        self.drawText(self.title, self.text_sizes[0], AlertDialogStartX + AlertDialogLenX // 2, AlertDialogStartY +
                       (dialogPad + DialogTitleHeight) // 2, CHESS_WHITE, centre='XY')
 
         if '*' not in self.alertText:
-            self.drawText(self.alertText, 40, DialogInX + DialogInLenX // 2, DialogInY + SquareDimen,
+            self.drawText(self.alertText, self.text_sizes[1], DialogInX + DialogInLenX // 2, DialogInY + SquareDimen,
                           CHESS_WHITE, centre=True)
         else:
             texts = self.alertText.split('*')
             length = SquareDimen // (len(texts) + (len(texts) % 2))
             for txt in texts:
-                self.drawText(txt, 30, DialogInX + DialogInLenX // 2, DialogInY + length, CHESS_WHITE, centre=True)
+                self.drawText(txt, self.text_sizes[2], DialogInX + DialogInLenX // 2, DialogInY + length, CHESS_WHITE,
+                              centre=True)
                 length += SquareDimen // 2
 
         btnX = DialogInX + int(0.125 * DialogInLenX)
@@ -44,17 +46,18 @@ class AlertDialog:
             btnLenX = min(int(1.5 * SquareDimen), max(SquareDimen, 30 * (len(self.nBtn) + 2)))
             self.nBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX, btnY), (btnLenX, btnLenY)),
                                              border_radius=15)
-            self.drawText(self.nBtn[0], 20, btnX + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0), centre=True)
+            self.drawText(self.nBtn[0], self.text_sizes[3], btnX + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0),
+                          centre=True)
         if self.pBtn:
             btnLenX = min(int(1.5 * SquareDimen), max(SquareDimen, 30 * (len(self.pBtn) + 2)))
             self.pBtnRect = pygame.draw.rect(self.win, CHESS_WHITE, ((btnX + DialogInLenX // 2, btnY),
                                                                      (btnLenX, btnLenY)), border_radius=15)
-            self.drawText(self.pBtn[0], 20, btnX + DialogInLenX // 2 + btnLenX // 2, btnY + btnLenY // 2, (0, 0, 0),
-                          centre=True)
+            self.drawText(self.pBtn[0], self.text_sizes[3], btnX + DialogInLenX // 2 + btnLenX // 2,
+                          btnY + btnLenY // 2, (0, 0, 0), centre=True)
         pygame.display.update()
 
     def drawText(self, text, size, txtX, txtY, color, colorBg=None, centre=False):
-        Txt = pygame.font.Font(self.font, size).render(text, True, color, colorBg)
+        Txt = pygame.font.Font(self.text_font, size).render(text, True, color, colorBg)
         nameRect = Txt.get_rect()
         if centre in [False, 'X', 'Y']:
             if centre == 'Y':
@@ -67,11 +70,30 @@ class AlertDialog:
         nameRect.center = (txtX, txtY)
         self.win.blit(Txt, nameRect)
 
+class FontSizes:
+    def __init__(self, lang):
+        self.lang = lang
+
+        self.player_name = 36
+        self.menu_btn_size = 25
+        self.think_msg = 26
+        self.coord = 18
+        self.alert_sizes = [50, 40, 30, 20]   # Title, textLarge, textSmall, Btn
+        self.setSizes()
+
+    def setSizes(self):
+        if self.lang == 'HINDI':
+            self.player_name = 52
+            self.think_msg = 32
+            self.menu_btn_size = 32
+            self.alert_sizes = [60, 50, 40, 35]
+
 class Language:
     def __init__(self, language):
         self.language = language
         self.font = "Assets/product_sans_regular.ttf"
         self.fontBold = "Assets/product_sans_bold.ttf"
+        self.coordFont = "Assets/product_sans_bold.ttf"
 
         self.p1Name = "Player 1"
         self.p2Name = "Player 2"
@@ -121,8 +143,8 @@ class Language:
 
     def setLanguage(self):
         if self.language == 'HINDI':
-            self.font = "Assets/shivaji.ttf"
-            self.fontBold = "Assets/shivaji.ttf"
+            self.font = "Assets/Shiv02.ttf"
+            self.fontBold = "Assets/Shiv02.ttf"
 
             self.p1Name = "iKlaaDI 1"
             self.p2Name = "iKlaaDI 2"

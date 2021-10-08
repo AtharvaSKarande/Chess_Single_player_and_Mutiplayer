@@ -10,7 +10,7 @@ class AI(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        depth = 4
+        depth = 3
         if self.ui.aiMove is None:
             t = time.time()
             evaluation, self.ui.aiMove = self.minimax(depth, self.ui.aiColor)
