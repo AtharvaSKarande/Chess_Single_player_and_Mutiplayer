@@ -2,10 +2,6 @@ import pygame
 
 from Game.values.dimens import PieceDimen, TitleLenX, TitleLenY, HEIGHT, WIDTH, ArrowBtnLenX, ArrowBtnLenY
 
-# Fonts
-gameFont = "Assets/product_sans_regular.ttf"
-gameFontBold = "Assets/product_sans_bold.ttf"
-
 brdFileName = 'saved_chess_board.pickle'
 
 # Pieces

@@ -7,11 +7,11 @@ import pygame.display
 from Chess.static import get_row_col
 from ListView import ListView
 from fruit import Fruit
-from .theme import Theme
+from Game.utils import Theme, Language
 from .values.colors import CHESS_WHITE, CHESS_BLACK
 from .values.dimens import *
 from .values.assets import *
-from .alertDialog import AlertDialog
+from Game.utils import AlertDialog
 
 
 def getBoardRowColFromPos(pos):
@@ -23,13 +23,14 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, p1Name, p2Name):
+    def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, gameLang, p1Name=None, p2Name=None):
 
         self.running = True
 
         self.win = win
         self.chessBoard = chessBoard
         self.theme = Theme(gameTheme)
+        self.txt = Language(gameLang)
         self.selectedPiece = None
         self.moveLoc = {}
         self.takesLoc = {}
@@ -50,8 +51,10 @@ class UI:
 
         self.analysis = False
 
-        self.p1Name = p1Name
-        self.p2Name = p2Name
+        if not p1Name:
+            self.p1Name = self.txt.p1Name
+        if not p2Name:
+            self.p2Name = self.txt.p2Name
 
         self.fruit = Fruit(self.chessBoard.moveList, self.theme.borderCLR, 60, FENLenX - 40, 2, 2, 5)
         self.listview = ListView(FENStartX + 20, FENStartY + 50, FENLenX - 40, HEIGHT - FENStartY - 100,
@@ -109,14 +112,14 @@ class UI:
 
         # Buttons
         if not self.analysis:
-            buttonList = ['New Game', 'Save Game', 'Settings']
+            buttonList = [self.txt.new_game, self.txt.save_game, self.txt.settings]
             if self.vsAI:
-                buttonList += ['Continue with friend']
+                buttonList += [self.txt.continue_with_friend]
             else:
-                buttonList += ['Continue with bot']
-            buttonList += ['Request Draw', 'Resign']
+                buttonList += [self.txt.continue_with_bot]
+            buttonList += [self.txt.request_draw, self.txt.resign]
         else:
-            buttonList = ['New Game', 'Settings']
+            buttonList = [self.txt.new_game, self.txt.settings]
 
         for buttonTxt in buttonList:
             pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuStartX + MenuBtnLeftPad, txtY),
@@ -127,11 +130,11 @@ class UI:
         # Placing Quit button at end.
         txtY = MenuStartY + MenuLenY - btnPadding - MenuBtnHeight
         pygame.draw.rect(self.win, self.theme.menuBtnCLR, ((MenuBtnLeftPad, txtY), (MenuBtnWidth, MenuBtnHeight)), 0, 8)
-        self.drawText('Quit', MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
+        self.drawText(self.txt.quit, MenuBtnFntSize, txtX, txtY, self.theme.menuBtnTxtCLR, centre='X')
         txtY += MenuBtnHeight + btnPadding
 
     def drawCoordinates(self):
-        font = pygame.font.Font(gameFontBold, 20)
+        font = pygame.font.Font(self.txt.fontBold, 20)
         for number in coordinates.keys():
             if number % 2:
                 clr = self.theme.lightCLR
@@ -221,15 +224,16 @@ class UI:
         self.win.blit(WHITE_KING, (P1StartX + pad, P1StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_WHITE:
-            self.drawText("Chess Bot", 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding, self.theme.darkCLR,
-                          font=gameFontBold)
+            self.drawText(self.txt.chess_bot, 36, P1StartX + 3 * pad + SquareDimen, P1StartY + padding,
+                          self.theme.darkCLR, font=self.txt.fontBold)
             if turn:
-                self.drawText('I am thinking...', 26, P1StartX + 3 * pad + SquareDimen, P1StartY + 0.7 * SquareDimen,
-                              self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR, font=gameFontBold)
+                self.drawText(self.txt.i_am_thinking, 26, P1StartX + 3 * pad + SquareDimen,
+                              P1StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
+                              font=self.txt.fontBold)
         else:
             self.drawText(self.p1Name, 36, P1StartX + 3 * pad + SquareDimen,
                           P1StartY + (padding + SquareDimen) // 2,
-                          self.theme.darkCLR, centre='Y', font=gameFontBold)
+                          self.theme.darkCLR, centre='Y', font=self.txt.fontBold)
 
         # self.drawText(self.p1Rating, 22, P1StartX + 3 * pad + SquareDimen, P1StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
@@ -243,15 +247,16 @@ class UI:
         self.win.blit(BLACK_KING, (P2StartX + pad, P2StartY + pad))
 
         if self.vsAI and self.aiColor == CHESS_BLACK:
-            self.drawText("Chess Bot", 36, P2StartX + 3 * pad + SquareDimen, P2StartY + padding, self.theme.lightCLR,
-                          font=gameFontBold)
+            self.drawText(self.txt.chess_bot, 36, P2StartX + 3 * pad + SquareDimen,
+                          P2StartY + padding, self.theme.lightCLR, font=self.txt.fontBold)
             if turn:
-                self.drawText('I am thinking...', 26, P2StartX + 3 * pad + SquareDimen, P2StartY + 0.7 * SquareDimen,
-                              self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR, font=gameFontBold)
+                self.drawText(self.txt.i_am_thinking, 26, P2StartX + 3 * pad + SquareDimen,
+                              P2StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
+                              font=self.txt.fontBold)
         else:
             self.drawText(self.p2Name, 36, P2StartX + 3 * pad + SquareDimen,
                           P2StartY + (padding + SquareDimen) // 2,
-                          self.theme.lightCLR, centre='Y', font=gameFontBold)
+                          self.theme.lightCLR, centre='Y', font=self.txt.fontBold)
 
         # self.drawText(self.p2Rating, 22, P2StartX + 3 * pad + SquareDimen, P2StartY + 4 * pad,
         # RatingFC, RatingBC, font=gameFontBold)
@@ -273,45 +278,45 @@ class UI:
 
             # Black won by checkmate.
             if self.chessBoard.turn:
-                self.showDialog("Checkmate*Black Won !", pBtn=("New Game", self.newGame),
-                                nBtn=("Analyse", self.analyse))
+                self.showDialog(self.txt.checkmate_msg_b, pBtn=(self.txt.new_game, self.newGame),
+                                nBtn=(self.txt.analyse, self.analyse))
 
             # White won by checkmate.
             else:
-                self.showDialog("Checkmate*White Won !", pBtn=("New Game", self.newGame),
-                                nBtn=("Analyse", self.analyse))
+                self.showDialog(self.txt.checkmate_msg_w, pBtn=(self.txt.new_game, self.newGame),
+                                nBtn=(self.txt.analyse, self.analyse))
 
         # Draw by Threefold repetition.
         elif self.chessBoard.draw_by_threefold_repetition():
-            self.showDialog("Game drawn by*Threefold repetition !", pBtn=("New Game", self.newGame),
-                            nBtn=("Analyse", self.analyse))
+            self.showDialog(self.txt.threefold_rep_msg, pBtn=(self.txt.new_game, self.newGame),
+                            nBtn=(self.txt.analyse, self.analyse))
 
         # Draw by Insufficient material.
         elif self.chessBoard.draw_by_insufficient_material():
-            self.showDialog("Game drawn by*Insufficient material !", pBtn=("New Game", self.newGame),
-                            nBtn=("Analyse", self.analyse))
+            self.showDialog(self.txt.insufficient_mat_msg, pBtn=(self.txt.new_game, self.newGame),
+                            nBtn=(self.txt.analyse, self.analyse))
 
         # Draw by Stalemate.
         elif self.chessBoard.draw_by_stalemate():
-            self.showDialog("Game drawn by*Stalemate !", pBtn=("New Game", self.newGame),
-                            nBtn=("Analyse", self.analyse))
+            self.showDialog(self.txt.stalemate_msg, pBtn=(self.txt.new_game, self.newGame),
+                            nBtn=(self.txt.analyse, self.analyse))
 
         # Win by resignation.
         elif self.chessBoard.win_by_resignation():
             # Black won by resignation.
             if self.chessBoard.winner == CHESS_BLACK:
-                self.showDialog("Resignation*Black won !", pBtn=("New Game", self.newGame),
-                                nBtn=("Analyse", self.analyse))
+                self.showDialog(self.txt.resign_msg_b, pBtn=(self.txt.new_game, self.newGame),
+                                nBtn=(self.txt.analyse, self.analyse))
 
             # White won by resignation.
             else:
-                self.showDialog("Resignation*White won !", pBtn=("New Game", self.newGame),
-                                nBtn=("Analyse", self.analyse))
+                self.showDialog(self.txt.resign_msg_w, pBtn=(self.txt.new_game, self.newGame),
+                                nBtn=(self.txt.analyse, self.analyse))
 
         # Draw accepted.
         elif self.chessBoard.draw_accepted:
-            self.showDialog("Game drawn !*Draw accepted.", pBtn=("New Game", self.newGame),
-                            nBtn=("Analyse", self.analyse))
+            self.showDialog(self.txt.draw_accept_msg, pBtn=(self.txt.new_game, self.newGame),
+                            nBtn=(self.txt.analyse, self.analyse))
 
     def drawEvalBar(self):
         if self.analysis:
@@ -356,7 +361,8 @@ class UI:
 
     def newGame(self):
         self.chessBoard.__init__(self.chessBoard.Board_type)
-        self.__init__(self.win, self.chessBoard, self.vsAI, self.aiColor, self.theme.title, self.p1Name, self.p2Name)
+        self.__init__(self.win, self.chessBoard, self.vsAI, self.aiColor, self.theme.title, self.txt.language,
+                      self.p1Name, self.p2Name)
 
     def menuClick(self, pos):
         row, col = pos
@@ -385,81 +391,84 @@ class UI:
                 if not self.analysis:
                     # Quit
                     if MenuStartY + MenuLenY - btnPadding - MenuBtnHeight < col < MenuStartY + MenuLenY - btnPadding:
-                        self.showDialog("Do you really want to quit?*The game will be saved.",
-                                        pBtn=("Yes", self.quit), nBtn=("No", self.doNothing))
+                        self.showDialog(self.txt.quit_msg,
+                                        pBtn=(self.txt.yes, self.quit), nBtn=(self.txt.no, self.doNothing))
 
                     # New Game.
                     if Y < col < Y + MenuBtnHeight:
-                        self.showDialog('Do you really want to*start a new game?', pBtn=('Yes', self.newGame),
-                                        nBtn=('No', self.doNothing))
+                        self.showDialog(self.txt.new_game_msg, pBtn=(self.txt.yes, self.newGame),
+                                        nBtn=(self.txt.no, self.doNothing))
                     Y += btnPadding + MenuBtnHeight
 
                     # Game saved.
                     if Y < col < Y + MenuBtnHeight:
                         self.saveBoard()
-                        self.showDialog('Game Saved.')
+                        self.showDialog(self.txt.game_saved_msg)
                     Y += btnPadding + MenuBtnHeight
 
                     # Settings.
                     if Y < col < Y + MenuBtnHeight:
-                        print("Settings not implemented.")
+                        print("--> Settings not implemented. <--")
                     Y += btnPadding + MenuBtnHeight
 
                     # Continue with friend/bot.
                     if Y < col < Y + MenuBtnHeight:
                         if self.vsAI:
-                            self.showDialog("Do you want to continue*the game with the friend?",
-                                            pBtn=("Yes", self.switchPlayerAndAI), nBtn=("No", self.doNothing))
+                            self.showDialog(self.txt.cont_with_friend_qn,
+                                            pBtn=(self.txt.yes, self.switchPlayerAndAI),
+                                            nBtn=(self.txt.no, self.doNothing))
                         else:
-                            self.showDialog("Do you want to continue*the game with the bot?",
-                                            pBtn=("Yes", self.switchPlayerAndAI), nBtn=("No", self.doNothing))
+                            self.showDialog(self.txt.cont_with_bot_qn,
+                                            pBtn=(self.txt.yes, self.switchPlayerAndAI),
+                                            nBtn=(self.txt.no, self.doNothing))
                     Y += btnPadding + MenuBtnHeight
 
                     # Request draw.
                     if Y < col < Y + MenuBtnHeight:
-                        self.showDialog("Do you really want to*request a draw?",
-                                        pBtn=("Yes", self.chessBoard.request_draw), nBtn=("No", self.doNothing))
+                        self.showDialog(self.txt.req_draw_qn,
+                                        pBtn=(self.txt.yes, self.chessBoard.request_draw),
+                                        nBtn=(self.txt.no, self.doNothing))
                     Y += btnPadding + MenuBtnHeight
 
                     # resign.
                     if Y < col < Y + MenuBtnHeight:
-                        self.showDialog("Do you really want to*resign form game?", pBtn=("Yes", self.chessBoard.resign),
-                                        nBtn=("No", self.doNothing))
+                        self.showDialog(self.txt.resign_qn, pBtn=(self.txt.yes, self.chessBoard.resign),
+                                        nBtn=(self.txt.no, self.doNothing))
 
                 else:
                     # Quit
                     if MenuStartY + MenuLenY - btnPadding - MenuBtnHeight < col < MenuStartY + MenuLenY - btnPadding:
-                        self.showDialog("Do you really want to quit?*The game will not be saved !!",
-                                        pBtn=("Yes", self.quit), nBtn=("No", self.doNothing))
+                        self.showDialog(self.txt.quit_no_save_msg,
+                                        pBtn=(self.txt.yes, self.quit), nBtn=(self.txt.no, self.doNothing))
 
                     # New Game.
                     if Y < col < Y + MenuBtnHeight:
-                        self.showDialog('Do you really want to*start a new game?', pBtn=('Yes', self.newGame),
-                                        nBtn=('No', self.doNothing))
+                        self.showDialog(self.txt.new_game_qn, pBtn=(self.txt.yes, self.newGame),
+                                        nBtn=(self.txt.no, self.doNothing))
                     Y += btnPadding + MenuBtnHeight
 
                     # Settings.
                     if Y < col < Y + MenuBtnHeight:
-                        print("Settings not implemented.")
+                        print("--> Settings not implemented. <--")
 
     def switchPlayerAndAI(self):
         # Ai started parameter is handled in while loop of play.py
-        message = "*Switching "
+        message = self.txt.switching + ' '
         if self.vsAI:
             self.aiColor = None
             if self.chessBoard.turn:
-                message += "Chess Bot*with " + self.p2Name + "!"
+                message += self.txt.chess_bot_with + ' ' + self.p2Name + ' ' + self.txt.exclamation
             else:
-                message += "Chess Bot*with " + self.p1Name + "!"
+                message += self.txt.chess_bot_with + ' ' + self.p1Name + ' ' + self.txt.exclamation
         else:
             if self.chessBoard.turn:
                 self.aiColor = CHESS_BLACK
                 self.aiTurn = False
-                message += self.p2Name + "*with Chess Bot !"
+                message += self.p2Name + self.txt.with_chess_bot + ' ' + self.txt.exclamation
             else:
                 self.aiColor = CHESS_WHITE
                 self.aiTurn = True
-                message += self.p1Name + "*with Chess Bot !"
+                message += self.p1Name + self.txt.with_chess_bot + ' ' + self.txt.exclamation
         self.vsAI = not self.vsAI
 
         self.showDialog(message)
@@ -595,7 +604,9 @@ class UI:
                 self.showPiece('b', 3, 3)
                 self.showPiece('n', 3, 4)
 
-    def drawText(self, text, size, txtX, txtY, color, colorBg=None, font=gameFont, centre=False):
+    def drawText(self, text, size, txtX, txtY, color, colorBg=None, font=None, centre=False):
+        if font is None:
+            font = self.txt.font
         Txt = pygame.font.Font(font, size).render(text, True, color, colorBg)
         nameRect = Txt.get_rect()
         if centre in [False, 'X', 'Y']:
@@ -628,8 +639,11 @@ class UI:
     def doNothing(self):
         pass
 
-    def showDialog(self, text, winTitle="Chess", pBtn=None, nBtn=None, sleepTime=1):
-        self.dialog = AlertDialog(self.win, text, self.theme.alertFgCLR, self.theme.alertBgCLR, winTitle, pBtn, nBtn)
+    def showDialog(self, text, winTitle=None, pBtn=None, nBtn=None, sleepTime=1):
+        if winTitle is None:
+            winTitle = self.txt.chess
+        self.dialog = AlertDialog(self.win, text, self.theme.alertFgCLR, self.theme.alertBgCLR, self.txt.font,
+                                  winTitle, pBtn, nBtn)
         self.dialog.show()
         if pBtn == nBtn is None:
             time.sleep(sleepTime)

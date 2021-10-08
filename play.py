@@ -2,9 +2,10 @@ import os
 import pickle
 
 import Chess
+import pygame
 from Game import UI
 from ChessAI import AI
-from Game.values.dimens import *
+from Game.values.dimens import WIDTH, HEIGHT, TitleLenX
 from Game.values.assets import brdFileName
 
 FPS = 60
@@ -18,12 +19,11 @@ class Play:
         self.displayUI = None
         self.ai = None
 
-    def start(self, vsAI, aiColor, theme, p1Name="Player 1", p2Name="Player 2"):
+    def start(self, vsAI, aiColor, theme, language, p1Name=None, p2Name=None):
         clock = pygame.time.Clock()
         self.assignChessBoard()
 
-        self.displayUI = UI(win, self.chessBoard, vsAI=vsAI, aiColor=aiColor, gameTheme=theme, p1Name=p1Name,
-                            p2Name=p2Name)
+        self.displayUI = UI(win, self.chessBoard, vsAI, aiColor, theme, language, p1Name, p2Name)
         self.displayUI.listview.setOnItemSelected(self.OnItemClick)
         self.displayUI.drawDisplay()
 
@@ -93,4 +93,4 @@ class Play:
 
 if __name__ == "__main__":
     playGame = Play()
-    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT")
+    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT", language="HINDI")
