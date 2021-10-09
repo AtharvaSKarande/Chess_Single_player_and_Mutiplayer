@@ -319,6 +319,10 @@ class UI:
             self.showDialog(self.txt.draw_accept_msg, pBtn=(self.txt.new_game, self.newGame),
                             nBtn=(self.txt.analyse, self.analyse))
 
+        elif self.chessBoard.draw_rejected:
+            self.chessBoard.draw_rejected = False
+            self.showDialog(self.txt.draw_reject_msg)
+
     def drawEvalBar(self):
         if self.analysis:
             pygame.draw.rect(self.win, self.theme.borderCLR, (EvalBarStartX, EvalBarStartY, EvalBarLenX, EvalBarLenY))

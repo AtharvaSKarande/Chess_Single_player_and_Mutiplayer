@@ -52,6 +52,7 @@ class chessBoard:
         self.piecesMoved = {'K': -1, 'LR': -1, 'RR': -1, 'k': -1, 'lr': -1, 'rr': -1}
 
         self.draw_accepted = False
+        self.draw_rejected = False
         self.winner = None
         self.initialize_pieces()
 
@@ -874,7 +875,11 @@ class chessBoard:
         return False
 
     def request_draw(self):
-        self.draw_accepted = True
+        w, b = self.get_score()
+        if w == b:
+            self.draw_accepted = True
+        else:
+            self.draw_rejected = True
 
     def resign(self):
         if self.turn:

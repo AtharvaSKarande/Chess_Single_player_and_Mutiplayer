@@ -122,6 +122,7 @@ class Language:
         self.resign_msg_b = "Resignation*Black won !"
         self.resign_msg_w = "Resignation*White won !"
         self.draw_accept_msg = "Game drawn !*Draw accepted."
+        self.draw_reject_msg = "*Points doesn't match.*Draw Rejected."
 
         self.quit_msg = "Do you really want to quit?*The game will be saved."
         self.new_game_msg = "Do you really want to*start a new game?"

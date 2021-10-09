@@ -93,4 +93,4 @@ class Play:
 
 if __name__ == "__main__":
     playGame = Play()
-    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT", language="HINDI")
+    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT", language="ENGLISH")
