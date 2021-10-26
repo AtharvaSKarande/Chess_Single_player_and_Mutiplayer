@@ -23,7 +23,7 @@ def getBoardRowColFromPos(pos):
 
 
 class UI:
-    def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, gameLang, p1Name=None, p2Name=None):
+    def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, gameLang, volume=50, p1Name=None, p2Name=None):
 
         self.running = True
 
@@ -39,6 +39,7 @@ class UI:
         self.promotionMove = None
         self.dialog = False
 
+        self.gameVolume = volume
         self.vsAI = vsAI
         self.aiColor = aiColor
         self.aiMove = None
@@ -51,6 +52,13 @@ class UI:
             self.aiTurn = False
 
         self.analysis = False
+
+        self.p1Name = p1Name
+        self.p2Name = p2Name
+
+        if vsAI and aiColor == CHESS_WHITE:
+            self.p1Name = self.txt.p1Name
+            self.p2Name = p1Name
 
         if not p1Name:
             self.p1Name = self.txt.p1Name

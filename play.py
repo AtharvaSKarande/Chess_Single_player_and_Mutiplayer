@@ -19,11 +19,12 @@ class Play:
         self.displayUI = None
         self.ai = None
 
-    def start(self, vsAI, aiColor, theme, language, p1Name=None, p2Name=None):
+    def start(self, vsAI, aiColor, theme, language, volume=50, chess_type='STANDARD', p1Name=None, p2Name=None,
+              isContinue=True):
         clock = pygame.time.Clock()
-        self.assignChessBoard()
+        self.assignChessBoard(chess_type, isContinue)
 
-        self.displayUI = UI(win, self.chessBoard, vsAI, aiColor, theme, language, p1Name, p2Name)
+        self.displayUI = UI(win, self.chessBoard, vsAI, aiColor, theme, language, 50, p1Name, p2Name)
         self.displayUI.listview.setOnItemSelected(self.OnItemClick)
         self.displayUI.drawDisplay()
 
@@ -67,12 +68,12 @@ class Play:
 
         self.displayUI.quit()
 
-    def assignChessBoard(self):
-        if os.path.exists(brdFileName):
+    def assignChessBoard(self, chess_type, isContinue):
+        if isContinue and os.path.exists(brdFileName):
             with open(brdFileName, "rb") as savedBrd:
                 self.chessBoard = pickle.load(savedBrd)
         else:
-            self.chessBoard = Chess.chessBoard()
+            self.chessBoard = Chess.chessBoard(chess_type)
 
     # noinspection PyUnusedLocal
     def OnItemClick(self, x, y, W, Ih, pos):
@@ -93,4 +94,5 @@ class Play:
 
 if __name__ == "__main__":
     playGame = Play()
-    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT", language="ENGLISH")
+    playGame.start(vsAI=False, aiColor=None, theme="DEFAULT", language="ENGLISH", volume=50, chess_type="CHESS_960",
+                   p1Name="L", p2Name="N", isContinue=False)

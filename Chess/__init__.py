@@ -57,7 +57,61 @@ class chessBoard:
         self.initialize_pieces()
 
     def initialize_pieces(self):
-        if self.Board_type == 'STANDARD':
+        if self.Board_type == 'STANDARD_NON_CASTLE':
+
+            self.WhiteKing = King(0, 4, CHESS_WHITE)
+            self.BlackKing = King(7, 4, CHESS_BLACK)
+
+            self.pieces = [
+                [Rook(0, 0, CHESS_WHITE), Knight(0, 1, CHESS_WHITE), Bishop(0, 2, CHESS_WHITE),
+                 Queen(0, 3, CHESS_WHITE), self.WhiteKing, Bishop(0, 5, CHESS_WHITE), Knight(0, 6, CHESS_WHITE),
+                 Rook(0, 7, CHESS_WHITE)],
+
+                [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
+                 Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
+
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+
+                [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
+                 Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
+
+                [Rook(7, 0, CHESS_BLACK), Knight(7, 1, CHESS_BLACK), Bishop(7, 2, CHESS_BLACK),
+                 Queen(7, 3, CHESS_BLACK), self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK),
+                 Rook(7, 7, CHESS_BLACK)]
+            ]
+            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
+        elif self.Board_type == 'CHESS_960':
+
+            self.WhiteKing = King(0, 3, CHESS_WHITE)
+            self.BlackKing = King(7, 3, CHESS_BLACK)
+
+            self.pieces = [
+                [Queen(0, 0, CHESS_WHITE), Rook(0, 1, CHESS_WHITE), Knight(0, 2, CHESS_WHITE), self.WhiteKing,
+                 Knight(0, 4, CHESS_WHITE), Bishop(0, 5, CHESS_WHITE), Bishop(0, 6, CHESS_WHITE),
+                 Rook(0, 7, CHESS_WHITE)],
+
+                [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
+                 Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
+
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+                ['.', '.', '.', '.', '.', '.', '.', '.'],
+
+                [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
+                 Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
+
+                [Queen(7, 0, CHESS_BLACK), Rook(7, 1, CHESS_BLACK), Knight(7, 2, CHESS_BLACK), self.BlackKing,
+                 Knight(7, 4, CHESS_BLACK), Bishop(7, 5, CHESS_BLACK), Bishop(7, 6, CHESS_BLACK),
+                 Rook(7, 7, CHESS_BLACK)]
+            ]
+
+            # No castling for chess_960
+            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
+        else:
             # 7     r n b q k b n r
             # 6     p p p p p p p p
             # 5     . . . . . . . .
@@ -92,41 +146,6 @@ class chessBoard:
                  Queen(7, 3, CHESS_BLACK), self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK),
                  Rook(7, 7, CHESS_BLACK)]
             ]
-        elif self.Board_type == 'STANDARD_NON_CASTLE':
-
-            self.WhiteKing = King(0, 4, CHESS_WHITE)
-            self.BlackKing = King(7, 4, CHESS_BLACK)
-
-            self.pieces = [
-                [Rook(0, 0, CHESS_WHITE), Knight(0, 1, CHESS_WHITE), Bishop(0, 2, CHESS_WHITE),
-                 Queen(0, 3, CHESS_WHITE), self.WhiteKing, Bishop(0, 5, CHESS_WHITE), Knight(0, 6, CHESS_WHITE),
-                 Rook(0, 7, CHESS_WHITE)],
-
-                [Pawn(1, 0, CHESS_WHITE), Pawn(1, 1, CHESS_WHITE), Pawn(1, 2, CHESS_WHITE), Pawn(1, 3, CHESS_WHITE),
-                 Pawn(1, 4, CHESS_WHITE), Pawn(1, 5, CHESS_WHITE), Pawn(1, 6, CHESS_WHITE), Pawn(1, 7, CHESS_WHITE)],
-
-                ['.', '.', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', '.', '.', '.'],
-                ['.', '.', '.', '.', '.', '.', '.', '.'],
-
-                [Pawn(6, 0, CHESS_BLACK), Pawn(6, 1, CHESS_BLACK), Pawn(6, 2, CHESS_BLACK), Pawn(6, 3, CHESS_BLACK),
-                 Pawn(6, 4, CHESS_BLACK), Pawn(6, 5, CHESS_BLACK), Pawn(6, 6, CHESS_BLACK), Pawn(6, 7, CHESS_BLACK)],
-
-                [Rook(7, 0, CHESS_BLACK), Knight(7, 1, CHESS_BLACK), Bishop(7, 2, CHESS_BLACK),
-                 Queen(7, 3, CHESS_BLACK), self.BlackKing, Bishop(7, 5, CHESS_BLACK), Knight(7, 6, CHESS_BLACK),
-                 Rook(7, 7, CHESS_BLACK)]
-            ]
-            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
-        elif self.Board_type == 'CHESS_960':
-
-            self.WhiteKing = King(0, 4, CHESS_WHITE)
-            self.BlackKing = King(7, 4, CHESS_BLACK)
-
-            # No castling for chess_960
-            self.piecesMoved = {'K': 0, 'LR': 0, 'RR': 0, 'k': 0, 'lr': 0, 'rr': 0}
-        else:
-            print("INVALID BOARD TYPE.")
 
     def print_board(self):
         for i in self.pieces[::-1]:
