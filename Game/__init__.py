@@ -474,11 +474,13 @@ class UI:
         message = self.txt.switching + ' '
         if self.vsAI:
             self.aiColor = None
+            self.vsAI = False
             if self.chessBoard.turn:
                 message += self.txt.chess_bot_with + ' ' + self.p2Name + ' ' + self.txt.exclamation
             else:
                 message += self.txt.chess_bot_with + ' ' + self.p1Name + ' ' + self.txt.exclamation
         else:
+            self.vsAI = 'MEDIUM'
             if self.chessBoard.turn:
                 self.aiColor = CHESS_BLACK
                 self.aiTurn = False
@@ -487,7 +489,6 @@ class UI:
                 self.aiColor = CHESS_WHITE
                 self.aiTurn = True
                 message += self.p1Name + self.txt.with_chess_bot + ' ' + self.txt.exclamation
-        self.vsAI = not self.vsAI
 
         self.showDialog(message)
 

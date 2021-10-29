@@ -401,7 +401,8 @@ class chessBoard:
         self.moveCount += 1
         self.change_turn()
         self.moveList.append(move)
-        self.evaluate_player_advantage()
+        if not debug:
+            self.evaluate_player_advantage()
         return True
 
     def move_back(self, debug=False):
@@ -637,7 +638,6 @@ class chessBoard:
 
             try:
                 prevMove = self.moveList[-1]
-                print(prevMove)
                 if prevMove == 'O-O':
                     if self.turn:
                         self.prev_pos = [(7, 4), (7, 7)]
@@ -659,7 +659,8 @@ class chessBoard:
             except IndexError:
                 self.prev_pos = []
                 self.new_pos = []
-        self.evaluate_player_advantage()
+        if not debug:
+            self.evaluate_player_advantage()
         return True
 
     def is_check(self, row=None, col=None):
@@ -867,14 +868,11 @@ class chessBoard:
                         validMoves.extend(piece.get_valid_moves(self))
         return validMoves
 
-    def evaluate_player_advantage(self, color=CHESS_WHITE):
+    def evaluate_player_advantage(self):
         wScore, bScore = self.get_score()
         self.p1_adv = str(round(wScore/(wScore+bScore), 2))
         self.p2_adv = str(round(bScore/(wScore+bScore), 2))
         self.win_percent = int(100 * wScore / (wScore+bScore))
-        if color == CHESS_WHITE:
-            return wScore - bScore
-        return bScore - wScore
 
     def evaluate_advantage(self, color=CHESS_WHITE):
         # score = 0
