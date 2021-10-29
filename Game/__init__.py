@@ -1,5 +1,6 @@
 import os
 import pickle
+from re import sub as re_sub
 import time
 
 import pygame.display
@@ -170,7 +171,6 @@ class UI:
             for piece in row:
                 if piece != '.':
                     self.showPiece(piece.role, piece.row, piece.col)
-        return
 
     def showPiece(self, piece, row, col):
         checkX = BoardStartX + padding + col * SquareDimen
@@ -178,7 +178,11 @@ class UI:
         X = checkX + (SquareDimen - PieceDimen) // 2
         Y = checkY + (SquareDimen - PieceDimen) // 2
 
-        if piece == 'TAKE':
+        if piece == 'PREV_POS':
+            pygame.draw.rect(self.win, self.theme.prevCLR, ((checkX, checkY), (SquareDimen, SquareDimen)))
+        elif piece == 'NEW_POS':
+            pygame.draw.rect(self.win, self.theme.newCLR, ((checkX, checkY), (SquareDimen, SquareDimen)))
+        elif piece == 'TAKE':
             pygame.draw.circle(self.win, self.theme.takeCLR, (checkX + SquareDimen // 2, checkY + SquareDimen // 2),
                                SquareDimen // 2, 7)
         elif piece == 'MOVE':
@@ -235,7 +239,7 @@ class UI:
         if self.vsAI and self.aiColor == CHESS_WHITE:
             self.drawText(self.txt.chess_bot, self.sizes.player_name, P1StartX + 3 * pad + SquareDimen,
                           P1StartY + padding, self.theme.darkCLR, font=self.txt.fontBold)
-            if turn:
+            if turn and not self.analysis:
                 self.drawText(self.txt.i_am_thinking, self.sizes.think_msg, P1StartX + 3 * pad + SquareDimen,
                               P1StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
                               font=self.txt.fontBold)
@@ -258,7 +262,7 @@ class UI:
         if self.vsAI and self.aiColor == CHESS_BLACK:
             self.drawText(self.txt.chess_bot, self.sizes.player_name, P2StartX + 3 * pad + SquareDimen,
                           P2StartY + padding, self.theme.lightCLR, font=self.txt.fontBold)
-            if turn:
+            if turn and not self.analysis:
                 self.drawText(self.txt.i_am_thinking, self.sizes.think_msg, P2StartX + 3 * pad + SquareDimen,
                               P2StartY + 0.7 * SquareDimen, self.theme.thinkMsgFgCLR, self.theme.thinkMsgBgCLR,
                               font=self.txt.fontBold)
@@ -502,13 +506,17 @@ class UI:
 
         if self.promotionMove:
             if row == 3 and col == 3:
-                self.chessBoard.move(self.promotionMove + 'B')
+                self.promotionMove = re_sub('=.', '=B', self.promotionMove)
+                self.chessBoard.move(self.promotionMove)
             if row == 3 and col == 4:
-                self.chessBoard.move(self.promotionMove + 'N')
+                self.promotionMove = re_sub('=.', '=N', self.promotionMove)
+                self.chessBoard.move(self.promotionMove)
             if row == 4 and col == 3:
-                self.chessBoard.move(self.promotionMove + 'Q')
+                self.promotionMove = re_sub('=.', '=Q', self.promotionMove)
+                self.chessBoard.move(self.promotionMove)
             if row == 4 and col == 4:
-                self.chessBoard.move(self.promotionMove + 'R')
+                self.promotionMove = re_sub('=.', '=R', self.promotionMove)
+                self.chessBoard.move(self.promotionMove)
             self.clearUIMoves()
             self.updateBoard()
             return
@@ -523,7 +531,7 @@ class UI:
             if self.selectedPiece:
                 if (row, col) in self.moveLoc.keys():
                     if '=' in self.moveLoc[(row, col)]:
-                        self.promotionMove = self.moveLoc[(row, col)][:-1]
+                        self.promotionMove = self.moveLoc[(row, col)]
                         self.updateBoard()
                         return
                     else:
@@ -544,7 +552,7 @@ class UI:
             if self.selectedPiece:
                 if (row, col) in self.takesLoc.keys():
                     if '=' in self.takesLoc[(row, col)]:
-                        self.promotionMove = self.takesLoc[(row, col)][:-1]
+                        self.promotionMove = self.takesLoc[(row, col)]
                         self.updateBoard()
                         return
                     else:
@@ -586,6 +594,13 @@ class UI:
                 self.moveLoc[get_row_col(mv[5:7])] = mv
 
     def drawUIMoves(self):
+
+        for pos in self.chessBoard.prev_pos:
+            self.showPiece('PREV_POS', pos[0], pos[1])
+
+        for pos in self.chessBoard.new_pos:
+            self.showPiece('NEW_POS', pos[0], pos[1])
+
         for move in self.moveLoc.keys():
             self.showPiece('MOVE', move[0], move[1])
         for take in self.takesLoc.keys():

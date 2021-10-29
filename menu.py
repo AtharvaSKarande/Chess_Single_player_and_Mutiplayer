@@ -570,7 +570,7 @@ class Menu:
     var_theme_selected = theme_selected  # possible options - "Classic", "Blue", "Red"
     var_volume = volume
     var_is_continue_last_game = continue_last_game
-    var_ai_color = "White"  # possible options - "White", "Black"
+    var_ai_color = "Black"  # possible options - "White", "Black"
     var_ai_difficulty = "Easy"  # possible options - "Easy", "Medium", "Hard"
     var_ui_language = "eng"  # possible options - "eng", "hindi"
 
@@ -709,7 +709,7 @@ class Menu:
                                        ['Standard Chess', 'Chess 960', 'No '
                                                                        'Castle'])
         difficulty_selector = Selector(self.screen, (550, 475), (860, 500), (420, 500), "Difficulty",
-                                       ['Easy', 'Medium', 'Hard '])
+                                       ['Easy', 'Medium', 'Hard'])
 
         first_player_name = Edittext(self.screen, 900, 389, 'Player1', 50, 250, borderFill=3,
                                      title="First Player's Name",
@@ -725,7 +725,7 @@ class Menu:
         info_win = info_dialogue(self.screen, (self.width - 1510, 190), (1475, 680), (70, 70, 70), (70, 70, 70),
                                  "Information", dia_type='info')
         ai_color_selector = Selector(self.screen, (550, 565), (830, 592), (390, 593), "AI color",
-                                     ['White', 'Black'])
+                                     ['Black', 'White'])
 
         global running, CHANGE_ACTIVITY
         while running and not CHANGE_ACTIVITY:
@@ -883,4 +883,3 @@ class Menu:
 
             playGame = Play()
             playGame.start(vsAI, aiColor, theme, language, volume, chess_type, p1Name, p2Name, continueLastGame)
-            print(vsAI, aiColor, theme, language, volume, chess_type, p1Name, p2Name, continueLastGame)

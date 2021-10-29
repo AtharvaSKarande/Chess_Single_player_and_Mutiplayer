@@ -10,7 +10,15 @@ class AI(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        depth = 3
+        if self.ui.vsAI == 'EASY':
+            depth = 2
+        elif self.ui.vsAI == 'MEDIUM':
+            depth = 3
+        elif self.ui.vsAI == 'HARD':
+            depth = 4
+        else:
+            return
+        print('Depth =', depth)
         if self.ui.aiMove is None:
             t = time.time()
             evaluation, self.ui.aiMove = self.minimax(depth, self.ui.aiColor)

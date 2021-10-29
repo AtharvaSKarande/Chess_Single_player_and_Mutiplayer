@@ -24,7 +24,7 @@ class Play:
         clock = pygame.time.Clock()
         self.assignChessBoard(chess_type, isContinue)
 
-        self.displayUI = UI(win, self.chessBoard, vsAI, aiColor, theme, language, 50, p1Name, p2Name)
+        self.displayUI = UI(win, self.chessBoard, vsAI, aiColor, theme, language, volume, p1Name, p2Name)
         self.displayUI.listview.setOnItemSelected(self.OnItemClick)
         self.displayUI.drawDisplay()
 

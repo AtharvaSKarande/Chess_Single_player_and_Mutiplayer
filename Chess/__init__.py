@@ -44,6 +44,9 @@ class chessBoard:
         self.p1_adv = "0.00"
         self.p2_adv = "-0.00"
 
+        self.prev_pos = []
+        self.new_pos = []
+
         self.moveList = []
         self.whiteMoveList = []
         self.poppedMoveList = []
@@ -193,6 +196,10 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['K'] = self.moveCount
                 self.piecesMoved['RR'] = self.moveCount
+
+                if not debug:
+                    self.prev_pos = [(0, 4), (0, 7)]
+                    self.new_pos = [(0, 5), (0, 6)]
             else:
                 self.pieces[7][4], self.pieces[7][6] = self.pieces[7][6], self.pieces[7][4]
                 self.pieces[7][6].col = 6
@@ -202,6 +209,10 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['k'] = self.moveCount
                 self.piecesMoved['rr'] = self.moveCount
+
+                if not debug:
+                    self.prev_pos = [(7, 4), (7, 7)]
+                    self.new_pos = [(7, 5), (7, 6)]
 
         elif move == 'O-O-O':
             if self.turn:
@@ -214,6 +225,10 @@ class chessBoard:
                 self.piecesMoved['K'] = self.moveCount
                 self.piecesMoved['LR'] = self.moveCount
 
+                if not debug:
+                    self.prev_pos = [(0, 0), (0, 4)]
+                    self.new_pos = [(0, 2), (0, 3)]
+
             else:
                 self.pieces[7][2], self.pieces[7][4] = self.pieces[7][4], self.pieces[7][2]
                 self.pieces[7][2].col = 2
@@ -223,6 +238,10 @@ class chessBoard:
                 # Setting king and rook to be moved.
                 self.piecesMoved['k'] = self.moveCount
                 self.piecesMoved['lr'] = self.moveCount
+
+                if not debug:
+                    self.prev_pos = [(7, 0), (7, 4)]
+                    self.new_pos = [(7, 2), (7, 3)]
 
         elif move[-2] == '=':
             newPos = get_row_col(move[5:7])
@@ -297,6 +316,10 @@ class chessBoard:
                     self.black_rooks += 1
                     self.pieces[newPos[0]][newPos[1]] = Rook(newPos[0], newPos[1], CHESS_BLACK)
 
+            if not debug:
+                self.prev_pos = [oldPos]
+                self.new_pos = [newPos]
+
         else:
             newPos = get_row_col(move[5:7])
             oldPos = get_row_col(move[2:4])
@@ -322,6 +345,7 @@ class chessBoard:
                     self.piecesMoved['lr'] = self.moveCount
                 elif oldPos == (7, 7) and self.piecesMoved['rr'] == -1:
                     self.piecesMoved['rr'] = self.moveCount
+
             elif move[0] == 'P':
                 # En-passant
                 if abs(oldPos[0] - newPos[0]) == 2 and oldPos[1] == newPos[1]:
@@ -369,6 +393,10 @@ class chessBoard:
                             if self.moveCount - 1 in self.en_passants.keys():
                                 if self.en_passants[self.moveCount - 1] == newPos[1]:
                                     self.pieces[oldPos[0]][newPos[1]] = '.'
+
+            if not debug:
+                self.prev_pos = [oldPos]
+                self.new_pos = [newPos]
 
         self.moveCount += 1
         self.change_turn()
@@ -606,6 +634,31 @@ class chessBoard:
         self.change_turn()
         if not debug:
             self.poppedMoveList.append(move)
+
+            try:
+                prevMove = self.moveList[-1]
+                print(prevMove)
+                if prevMove == 'O-O':
+                    if self.turn:
+                        self.prev_pos = [(7, 4), (7, 7)]
+                        self.new_pos = [(7, 5), (7, 6)]
+                    else:
+                        self.prev_pos = [(0, 4), (0, 7)]
+                        self.new_pos = [(0, 5), (0, 6)]
+                elif prevMove == 'O-O-O':
+                    if self.turn:
+                        self.prev_pos = [(7, 0), (7, 4)]
+                        self.new_pos = [(7, 2), (7, 3)]
+                    else:
+                        self.prev_pos = [(0, 0), (0, 4)]
+                        self.new_pos = [(0, 2), (0, 3)]
+                else:
+                    self.prev_pos = [get_row_col(prevMove[5:7])]
+                    self.new_pos = [get_row_col(prevMove[2:4])]
+
+            except IndexError:
+                self.prev_pos = []
+                self.new_pos = []
         self.evaluate_player_advantage()
         return True
 

@@ -167,6 +167,7 @@ class Theme:
         self.thinkMsgBgCLR = (255, 0, 0)
         self.checkCLR, self.takeCLR, self.moveCLR = (255, 0, 0), (255, 0, 0), (255, 0, 0)
         self.castleCLR, self.selectCLR, self.promotionCLR = (50, 50, 255), (200, 255, 0), (100, 100, 255)
+        self.prevCLR, self.newCLR = (255, 255, 75), self.selectCLR
         self.alertFgCLR, self.alertBgCLR = (150, 150, 150), (100, 100, 100)
 
         self.setTheme()
