@@ -861,7 +861,7 @@ class Menu:
                 p2Name = Menu.var_second_players_name.strip().capitalize()
 
             theme = 'DEFAULT'
-            if Menu.var_theme_selected == 'Orange':
+            if Menu.theme_selected == 'Orange':
                 theme = 'ORANGE'
 
             volume = Menu.volume

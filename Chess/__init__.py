@@ -41,8 +41,8 @@ class chessBoard:
 
         # Winning percentage of white
         self.win_percent = 50
-        self.p1_adv = "0.00"
-        self.p2_adv = "-0.00"
+        self.p1_adv = "50.0"
+        self.p2_adv = "50.0"
 
         self.prev_pos = []
         self.new_pos = []
@@ -659,7 +659,7 @@ class chessBoard:
             except IndexError:
                 self.prev_pos = []
                 self.new_pos = []
-        if not debug:
+
             self.evaluate_player_advantage()
         return True
 
@@ -869,9 +869,50 @@ class chessBoard:
         return validMoves
 
     def evaluate_player_advantage(self):
+        """wScore, bScore = self.get_score()
+        pts = 2.5
+
+        if self.turn:
+            wMoves = self.get_all_valid_moves(CHESS_WHITE)
+            bMoves = self.get_all_valid_moves(CHESS_BLACK)
+            print(wMoves, bMoves)
+        else:
+            bMoves = self.get_all_valid_moves(CHESS_BLACK)
+            wMoves = self.get_all_valid_moves(CHESS_WHITE)
+            print(wMoves, bMoves)
+
+        for mv in wMoves:
+            if 'xP' in mv:
+                wScore += pts * Pawn.Points
+            elif 'xB' in mv:
+                wScore += pts * Bishop.Points
+            elif 'xQ' in mv:
+                wScore += pts * Queen.Points
+            elif 'xN' in mv:
+                wScore += pts * Knight.Points
+            else:
+                wScore += pts
+
+        for mv in bMoves:
+            if 'xP' in mv:
+                bScore += pts * Pawn.Points
+            elif 'xB' in mv:
+                bScore += pts * Bishop.Points
+            elif 'xQ' in mv:
+                bScore += pts * Queen.Points
+            elif 'xN' in mv:
+                bScore += pts * Knight.Points
+            else:
+                bScore += pts
+
+        wScore += len(wMoves) * pts
+        bScore += len(bMoves) * pts"""
+
         wScore, bScore = self.get_score()
+
         self.p1_adv = str(round(wScore/(wScore+bScore), 2))
         self.p2_adv = str(round(bScore/(wScore+bScore), 2))
+
         self.win_percent = int(100 * wScore / (wScore+bScore))
 
     def evaluate_advantage(self, color=CHESS_WHITE):

@@ -27,6 +27,7 @@ class UI:
     def __init__(self, win, chessBoard, vsAI, aiColor, gameTheme, gameLang, volume=50, p1Name=None, p2Name=None):
 
         self.running = True
+        self.preferences = (win, chessBoard, vsAI, aiColor, gameTheme, gameLang, volume, p1Name, p2Name)
 
         self.win = win
         self.chessBoard = chessBoard
@@ -355,8 +356,15 @@ class UI:
                              (EvalBarStartX + padding, EvalBarStartY, EvalBarLenX - padding, EvalBarLenY))
 
     def drawInformation(self):
+        X, Y, LenX, LenY = InfoStartX, InfoStartY, InfoLenX, InfoLenY
+        userMove = 'O-O-O+'
+        bestMove = 'P_e7_e8=Q+'
         if self.analysis:
-            pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
+            pygame.draw.rect(self.win, self.theme.lightCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
+
+            self.drawText("Analysis", 40, X+LenX//2, Y+padding//2, CHESS_BLACK, centre='X')
+            self.drawText("Your Move : " + userMove, 25, X + padding, Y + LenY // 2, CHESS_BLACK, centre='Y')
+            self.drawText("Best Move : " + bestMove, 25, X + padding, Y + LenY - 50, CHESS_BLACK)
         else:
             pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 
@@ -376,11 +384,13 @@ class UI:
 
     def analyse(self):
         self.analysis = True
+        self.vsAI = False
+        self.aiColor = None
 
     def newGame(self):
         self.chessBoard.__init__(self.chessBoard.Board_type)
-        self.__init__(self.win, self.chessBoard, self.vsAI, self.aiColor, self.theme.title, self.txt.language,
-                      self.p1Name, self.p2Name)
+        p = self.preferences
+        self.__init__(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8])
 
     def menuClick(self, pos):
         row, col = pos
