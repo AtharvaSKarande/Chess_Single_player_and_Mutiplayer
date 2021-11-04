@@ -27,7 +27,7 @@ class King:
             if is_valid_rc(row, col):
                 if pieces[row][col] == '.':
                     allMoves.append(mv + get_board_co_ord(row, col))
-                elif pieces[row][col].color != self.color:
+                elif pieces[row][col].color != self.color and pieces[row][col].role not in ['K', 'k']:
                     allMoves.append(mv + get_board_co_ord(row, col) + 'x' + pieces[row][col].role.upper())
 
         # Castling moves

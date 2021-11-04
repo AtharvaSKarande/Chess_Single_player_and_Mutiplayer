@@ -25,7 +25,7 @@ class Rook:
         while is_valid_rc(r, c):
             piece = pieces[r][c]
             if piece != '.':
-                if piece.color != self.color:
+                if piece.color != self.color and piece.role not in ['K', 'k']:
                     allMoves.append(mv + get_board_co_ord(r, c) + 'x' + piece.role.upper())
                 break
             else:
@@ -37,7 +37,7 @@ class Rook:
         while is_valid_rc(r, c):
             piece = pieces[r][c]
             if piece != '.':
-                if piece.color != self.color:
+                if piece.color != self.color and piece.role not in ['K', 'k']:
                     allMoves.append(mv + get_board_co_ord(r, c) + 'x' + piece.role.upper())
                 break
             else:
@@ -49,7 +49,7 @@ class Rook:
         while is_valid_rc(r, c):
             piece = pieces[r][c]
             if piece != '.':
-                if piece.color != self.color:
+                if piece.color != self.color and piece.role not in ['K', 'k']:
                     allMoves.append(mv + get_board_co_ord(r, c) + 'x' + piece.role.upper())
                 break
             else:
@@ -61,7 +61,7 @@ class Rook:
         while is_valid_rc(r, c):
             piece = pieces[r][c]
             if piece != '.':
-                if piece.color != self.color:
+                if piece.color != self.color and piece.role not in ['K', 'k']:
                     allMoves.append(mv + get_board_co_ord(r, c) + 'x' + piece.role.upper())
                 break
             else:

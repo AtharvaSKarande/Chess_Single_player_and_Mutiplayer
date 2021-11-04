@@ -58,9 +58,13 @@ class UI:
         self.p1Name = p1Name
         self.p2Name = p2Name
 
+        if gameLang == 'HINDI':
+            self.p1Name = self.txt.p1Name
+            self.p2Name = self.txt.p2Name
+
         if vsAI and aiColor == CHESS_WHITE:
             self.p1Name = self.txt.p1Name
-            self.p2Name = p1Name
+            self.p2Name = self.p1Name
 
         if not p1Name:
             self.p1Name = self.txt.p1Name
@@ -357,14 +361,19 @@ class UI:
 
     def drawInformation(self):
         X, Y, LenX, LenY = InfoStartX, InfoStartY, InfoLenX, InfoLenY
-        userMove = 'O-O-O+'
-        bestMove = 'P_e7_e8=Q+'
+        try:
+            userMove = self.chessBoard.moveList[-1]
+        except IndexError:
+            userMove = None
+        bestMove = self.chessBoard.bestPrevMove
         if self.analysis:
             pygame.draw.rect(self.win, self.theme.lightCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 
             self.drawText("Analysis", 40, X+LenX//2, Y+padding//2, CHESS_BLACK, centre='X')
-            self.drawText("Your Move : " + userMove, 25, X + padding, Y + LenY // 2, CHESS_BLACK, centre='Y')
-            self.drawText("Best Move : " + bestMove, 25, X + padding, Y + LenY - 50, CHESS_BLACK)
+            if userMove:
+                self.drawText("Your Move : " + userMove, 25, X + padding, Y + LenY // 2, CHESS_BLACK, centre='Y')
+            if bestMove:
+                self.drawText("Best Move : " + bestMove, 25, X + padding, Y + LenY - 50, CHESS_BLACK)
         else:
             pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 

@@ -1,3 +1,5 @@
+import random
+
 from Game.values.colors import CHESS_WHITE, CHESS_BLACK
 from .bishop import Bishop
 from .king import King
@@ -38,6 +40,10 @@ class chessBoard:
 
         self.en_passants = {}
         # Stores column of possible en-passant with the move associated with it.
+        self.eval_ai_color = None
+        self.bestPrevMove = None
+        self.bestMove = None
+        self.eval_depth = 2
 
         # Winning percentage of white
         self.win_percent = 50
@@ -640,21 +646,21 @@ class chessBoard:
                 prevMove = self.moveList[-1]
                 if prevMove == 'O-O':
                     if self.turn:
-                        self.prev_pos = [(7, 4), (7, 7)]
-                        self.new_pos = [(7, 5), (7, 6)]
+                        self.new_pos = [(7, 4), (7, 7)]
+                        self.prev_pos = [(7, 5), (7, 6)]
                     else:
-                        self.prev_pos = [(0, 4), (0, 7)]
-                        self.new_pos = [(0, 5), (0, 6)]
+                        self.new_pos = [(0, 4), (0, 7)]
+                        self.prev_pos = [(0, 5), (0, 6)]
                 elif prevMove == 'O-O-O':
                     if self.turn:
-                        self.prev_pos = [(7, 0), (7, 4)]
-                        self.new_pos = [(7, 2), (7, 3)]
+                        self.new_pos = [(7, 0), (7, 4)]
+                        self.prev_pos = [(7, 2), (7, 3)]
                     else:
-                        self.prev_pos = [(0, 0), (0, 4)]
-                        self.new_pos = [(0, 2), (0, 3)]
+                        self.new_pos = [(0, 0), (0, 4)]
+                        self.prev_pos = [(0, 2), (0, 3)]
                 else:
-                    self.prev_pos = [get_row_col(prevMove[5:7])]
-                    self.new_pos = [get_row_col(prevMove[2:4])]
+                    self.new_pos = [get_row_col(prevMove[5:7])]
+                    self.prev_pos = [get_row_col(prevMove[2:4])]
 
             except IndexError:
                 self.prev_pos = []
@@ -856,6 +862,9 @@ class chessBoard:
                 color = CHESS_WHITE
             else:
                 color = CHESS_BLACK
+        isTurnChanged = not self.turn == (color == CHESS_WHITE)
+        if isTurnChanged:
+            self.change_turn()
 
         validMoves = list()
         for row in self.pieces:
@@ -866,20 +875,37 @@ class chessBoard:
                         validMoves.extend(piece.get_valid_moves(self, self.en_passants[self.moveCount - 1]))
                     else:
                         validMoves.extend(piece.get_valid_moves(self))
+
+        if isTurnChanged:
+            self.change_turn()
         return validMoves
 
     def evaluate_player_advantage(self):
-        """wScore, bScore = self.get_score()
+        wScore, bScore = self.get_score()
         pts = 2.5
 
+        self.bestPrevMove = self.bestMove
         if self.turn:
-            wMoves = self.get_all_valid_moves(CHESS_WHITE)
-            bMoves = self.get_all_valid_moves(CHESS_BLACK)
-            print(wMoves, bMoves)
+            wMoves = self.get_all_valid_moves()
+            self.eval_ai_color = CHESS_WHITE
+            self.bestMove = self.minimax(self.eval_depth, CHESS_WHITE)[1]
+            if self.bestMove is not None:
+                self.move(self.bestMove, debug=True)
+                bMoves = self.get_all_valid_moves()
+                self.move_back(debug=True)
+            else:
+                bMoves = []
+
         else:
-            bMoves = self.get_all_valid_moves(CHESS_BLACK)
-            wMoves = self.get_all_valid_moves(CHESS_WHITE)
-            print(wMoves, bMoves)
+            bMoves = self.get_all_valid_moves()
+            self.eval_ai_color = CHESS_BLACK
+            self.bestMove = self.minimax(self.eval_depth, CHESS_BLACK)[1]
+            if self.bestMove is not None:
+                self.move(self.bestMove, debug=True)
+                wMoves = self.get_all_valid_moves()
+                self.move_back(debug=True)
+            else:
+                wMoves = []
 
         for mv in wMoves:
             if 'xP' in mv:
@@ -890,8 +916,7 @@ class chessBoard:
                 wScore += pts * Queen.Points
             elif 'xN' in mv:
                 wScore += pts * Knight.Points
-            else:
-                wScore += pts
+            wScore += pts
 
         for mv in bMoves:
             if 'xP' in mv:
@@ -902,18 +927,75 @@ class chessBoard:
                 bScore += pts * Queen.Points
             elif 'xN' in mv:
                 bScore += pts * Knight.Points
-            else:
-                bScore += pts
+            bScore += pts
 
         wScore += len(wMoves) * pts
-        bScore += len(bMoves) * pts"""
+        bScore += len(bMoves) * pts
 
-        wScore, bScore = self.get_score()
+        if self.is_check(self.WhiteKing.row, self.WhiteKing.col):
+            wScore = wScore * 0.8
+        if self.is_check(self.BlackKing.row, self.BlackKing.col):
+            bScore = bScore * 0.8
+        if self.is_checkmate():
+            if self.turn:
+                wScore, bScore = 1, 0
+            else:
+                wScore, bScore = 0, 1
 
         self.p1_adv = str(round(wScore/(wScore+bScore), 2))
         self.p2_adv = str(round(bScore/(wScore+bScore), 2))
 
         self.win_percent = int(100 * wScore / (wScore+bScore))
+
+    def minimax(self, depth, aiColor, alpha=float('-inf'), beta=float('inf')):
+        board = self
+        if depth == 0:
+            return board.evaluate_advantage(self.eval_ai_color), None
+
+        if aiColor == self.eval_ai_color:
+
+            oppoColor = CHESS_WHITE
+            if aiColor == CHESS_WHITE:
+                oppoColor = CHESS_BLACK
+
+            maxEval = float('-inf')
+            best_move = None
+            moveList = board.get_all_valid_moves(aiColor)
+            random.shuffle(moveList)
+
+            for mv in moveList:
+                board.move(mv, debug=True)
+                evaluation, bstMoveTillNow = self.minimax(depth-1, oppoColor, alpha, beta)
+                board.move_back(debug=True)
+                maxEval = max(maxEval, evaluation)
+                if maxEval == evaluation:
+                    best_move = mv
+                alpha = max(alpha, evaluation)
+                if beta < alpha:
+                    return maxEval, best_move
+            return maxEval, best_move
+
+        else:
+            oppoColor = CHESS_WHITE
+            if aiColor == CHESS_WHITE:
+                oppoColor = CHESS_BLACK
+
+            minEval = float('inf')
+            best_move = None
+            moveList = board.get_all_valid_moves(aiColor)
+            random.shuffle(moveList)
+
+            for mv in moveList:
+                board.move(mv, debug=True)
+                evaluation, bstMoveTillNow = self.minimax(depth - 1, oppoColor, alpha, beta)
+                board.move_back(debug=True)
+                minEval = min(minEval, evaluation)
+                if minEval == evaluation:
+                    best_move = mv
+                beta = min(beta, evaluation)
+                if beta < alpha:
+                    return minEval, best_move
+            return minEval, best_move
 
     def evaluate_advantage(self, color=CHESS_WHITE):
         # score = 0

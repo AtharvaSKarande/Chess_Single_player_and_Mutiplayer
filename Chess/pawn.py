@@ -51,18 +51,22 @@ class Pawn:
                     and pieces[self.row+direction][self.col-1].color != self.color:
                 nxtPlace = get_board_co_ord(self.row + direction, self.col-1)
                 takenPieceRole = pieces[self.row + direction][self.col-1].role.upper()
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=Q')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=R')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=N')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=B')
+                # Pawn should not take king.
+                if takenPieceRole not in ['K', 'k']:
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=Q')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=R')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=N')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=B')
             if is_valid_rc(0, self.col+1) and pieces[self.row + direction][self.col+1] != '.'\
                     and pieces[self.row+direction][self.col+1].color != self.color:
                 nxtPlace = get_board_co_ord(self.row + direction, self.col+1)
                 takenPieceRole = pieces[self.row + direction][self.col+1].role.upper()
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=Q')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=R')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=N')
-                allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=B')
+                # Pawn should not take king.
+                if takenPieceRole not in ['K', 'k']:
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=Q')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=R')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=N')
+                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole + '=B')
 
         # Pawn 1 move and takes.
         if (direction == 1 and self.row != 6) or (direction == -1 and self.row != 1):
@@ -74,14 +78,16 @@ class Pawn:
                 if pieceTk != '.' and pieceTk.color != self.color:
                     nxtPlace = get_board_co_ord(self.row + direction, self.col-1)
                     takenPieceRole = pieceTk.role.upper()
-                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole)
+                    if takenPieceRole not in ['K', 'k']:
+                        allMoves.append(mv + nxtPlace + 'x' + takenPieceRole)
 
             if is_valid_rc(0, self.col+1):
                 pieceTk = pieces[self.row + direction][self.col+1]
                 if pieceTk != '.' and pieceTk.color != self.color:
                     nxtPlace = get_board_co_ord(self.row + direction, self.col+1)
                     takenPieceRole = pieceTk.role.upper()
-                    allMoves.append(mv + nxtPlace + 'x' + takenPieceRole)
+                    if takenPieceRole not in ['K', 'k']:
+                        allMoves.append(mv + nxtPlace + 'x' + takenPieceRole)
 
         # Validation
         for mv in allMoves:
