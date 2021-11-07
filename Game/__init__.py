@@ -369,11 +369,13 @@ class UI:
         if self.analysis:
             pygame.draw.rect(self.win, self.theme.lightCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 
-            self.drawText("Analysis", 40, X+LenX//2, Y+padding//2, CHESS_BLACK, centre='X')
+            self.drawText(self.txt.analyse, 40, X+LenX//2, Y+padding//2, CHESS_BLACK, centre='X')
             if userMove:
-                self.drawText("Your Move : " + userMove, 25, X + padding, Y + LenY // 2, CHESS_BLACK, centre='Y')
+                self.drawText("Your Move : " + userMove, 25, X + padding, Y + LenY // 2, CHESS_BLACK,
+                              font=self.txt.engFont, centre='Y')
             if bestMove:
-                self.drawText("Best Move : " + bestMove, 25, X + padding, Y + LenY - 50, CHESS_BLACK)
+                self.drawText("Best Move : " + bestMove, 25, X + padding, Y + LenY - 50, CHESS_BLACK,
+                              font=self.txt.engFont)
         else:
             pygame.draw.rect(self.win, self.theme.darkCLR, (InfoStartX, InfoStartY, InfoLenX, InfoLenY))
 

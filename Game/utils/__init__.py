@@ -94,6 +94,7 @@ class Language:
         self.font = "Assets/product_sans_regular.ttf"
         self.fontBold = "Assets/product_sans_bold.ttf"
         self.coordFont = "Assets/product_sans_bold.ttf"
+        self.engFont = "Assets/product_sans_regular.ttf"
 
         self.p1Name = "Player 1"
         self.p2Name = "Player 2"
@@ -140,6 +141,8 @@ class Language:
         self.with_chess_bot = "*with Chess Bot"
         self.exclamation = "!"
 
+        self.analysis = "Analysis"
+
         self.setLanguage()
 
     def setLanguage(self):
@@ -154,6 +157,45 @@ class Language:
             self.chess_bot = "SatrMja baa^T"
             self.yes = "ha"
             self.no = "nahIM"
+
+            self.new_game = "nayaa Kola"
+            self.save_game = "jatna kro"
+            self.settings = "samaayaaojana"
+            self.continue_with_friend = "daost ko saaqa jaarI rKoM"
+            self.continue_with_bot = "baa^T ko saaqa jaarI rKoM"
+            self.request_draw = "samaanata ko ilayao puCoM"
+            self.resign = "har isvakaro"
+            self.quit = "baMd kroM"
+            self.analyse = "ivaSlaoYaNa"
+            self.i_am_thinking = "maOM saaoca rha hM^U…"
+
+            self.checkmate_msg_b = "maat*kalao isa@kaoM vaalaa ijata Ñ"
+            self.checkmate_msg_w = "maat*safod isa@kaoM vaalaa ijata Ñ"
+            self.threefold_rep_msg = "tIna gaunaa daohrava*Wara Kola samaana huAa^M Ñ"
+            self.insufficient_mat_msg = "Apyaa-Pt saamaga`I*Wara Kola samaana huAa^M Ñ"
+            self.stalemate_msg = "kaoš caala na bacanao*Wara Kola samaana huAa^M Ñ"
+            self.resign_msg_b = "har isvakarI*kalaa iKlaaDI ijata Ñ"
+            self.resign_msg_w = "har isvakarI*safod iKlaaDI ijata Ñ"
+            self.draw_accept_msg = "Kola samaana huAa^M  Ñ*samaanata svaIkarI gayaIÈ"
+            self.draw_reject_msg = "*AMk maola nahI KatoÈ*samaanata AsvaIkarI gayaIÈ"
+
+            self.quit_msg = "@yaa Aap sacamaoM CaoDnaa caahto hOMÆ*Kola jatna ikyaa jaayaogaaÈ"
+            self.new_game_msg = "@yaa Aap sacamaoM nayaa Kola*Sau$ krnaa caahto hOMÆ"
+            self.game_saved_msg = "Kola jatna hao gayaaÈ"
+
+            self.cont_with_friend_qn = "@yaa Aap daost ko saaqa*jaarI rKnaa caahto hOMÆ"
+            self.cont_with_bot_qn = "@yaa Aap baa^T ko saaqa*jaarI rKnaa caahto hOMÆ"
+            self.req_draw_qn = "@yaa Aap sacamaoM samaanata*caahto hOMÆ"
+            self.resign_qn = "@yaa Aap sacamaoM har*svaIkarnaa caahto hOMÆ"
+            self.quit_no_save_msg = "@yaa Aap sacamaoM Kola baMd krnaa caahto hOMÆ*Kola jatna nahI haogaa ÑÑ"
+            self.new_game_qn = "@yaa Aap sacamaoM nayaa Kola*Sau$ krnaa caahto hOMÆ"
+
+            self.switching = "*badla rha hOM"
+            self.chess_bot_with = "SatrMja ka*baa^T"
+            self.with_chess_bot = "*SatrMja ko baa^T ko saaqa"
+            self.exclamation = ""
+
+            self.analysis = "ivaSlaoYaNa"
 
 class Theme:
     def __init__(self, theme):
