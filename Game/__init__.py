@@ -2,7 +2,7 @@ import os
 import pickle
 from re import sub as re_sub
 import time
-
+from pygame import mixer
 import pygame.display
 
 from Chess.static import get_row_col
@@ -28,6 +28,10 @@ class UI:
 
         self.running = True
         self.preferences = (win, chessBoard, vsAI, aiColor, gameTheme, gameLang, volume, p1Name, p2Name)
+
+        self.mixer = mixer
+        self.mixer.init()
+        self.mixer.music.load("assets/chessmove.wav")
 
         self.win = win
         self.chessBoard = chessBoard
@@ -93,6 +97,8 @@ class UI:
                 else:
                     pygame.draw.rect(self.win, self.theme.lightCLR, ((x, y), (SquareDimen, SquareDimen)))
 
+        self.mixer.music.set_volume(self.gameVolume / 100)
+        self.mixer.music.play()
         self.drawUIMoves()
         self.drawPieces()
         self.drawCoordinates()
