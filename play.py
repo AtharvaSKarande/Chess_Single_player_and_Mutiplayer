@@ -91,6 +91,9 @@ class Play:
                 self.chessBoard.move_back()
             self.displayUI.updateBoard()
 
+    def startWithPref(self, pref):
+        self.start(pref[0], pref[1], pref[2], pref[3], pref[4], pref[5], pref[6], pref[7], pref[8])
+
 
 if __name__ == "__main__":
     playGame = Play()

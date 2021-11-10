@@ -3,13 +3,100 @@ import time
 
 from Game.values.colors import CHESS_WHITE, CHESS_BLACK
 from Game.values.dimens import WIDTH, HEIGHT
-from play import Play
 
 GLOBAL_PATH = ""
 gameFont = "Assets/product_sans_regular.ttf"
 IMG_PATH = "menu_images//"
 running = True
 CHANGE_ACTIVITY = False
+
+class Strings:
+    str_hindi = "Hindi"
+    str_english = "English"
+    str_play_against = "Play Against"
+    str_chess_type = "Chess Type"
+    str_chess_type_sc = "Standard Chess"
+    str_chess_type_nc = "No Castle"
+    str_chess_type_c960 = "Chess 960"
+    str_first_players_name = "First Player's Name"
+    str_second_players_name = "Second Player's Name"
+    str_difficulty = "Difficulty"
+    str_difficulty_easy = "Easy"
+    str_difficulty_medium = "Medium"
+    str_difficulty_hard = "Hard"
+    str_ai_color = "AI color"
+    str_ai_color_black = "Black"
+    str_ai_color_white = "White"
+    str_settings = "Settings"
+    str_play_the_game = "Play the game"
+    str_continue_last_game = "Continue last game"
+    str_themes = "Themes"
+    str_themes_orange = "Orange"
+    str_themes_classic = "Classic"
+    str_info = "info"
+    str_info_content = '''          There are six types of chess pieces. They are the pawn, the knight, the bishop,the rook, the queen, and the king. Pawns move up the board one square unless it's the first time they're moving when they may move two squares. Note that they cannot move backward.The pawn captures pieces one square diagonally and is the only chess piece that captures differently than the way it moves. It is also the only piece that can capture using the special en passant rule.The knight moves two squares horizontally and one vertically, or two squares vertically and one horizontally. The way the knight moves resembles the upper-case "L." The bishop can move any number of squares diagonally.The rook can move any number of squares vertically or horizontally.The queen is the most powerful piece on the board.It can move diagonally, horizontally, or vertically as many squares as it wants (unless another piece blocks it).The king can move one square in every direction.Also, the king can make use of the special castling rule together with a rook. 
+              You can choose to play against another human or against the built in AI/ bot. If you select AI, difficulty of the bot, and color of the bot's pieces can also be selected. Langaugge of the interface can be selected. All these options are provided in the main menu.In settings menu you can set volume of the game and theme of the game window. You can also access settings in game window. You can choose to play against AI at any point in time in the game if you are already playing against human. You can replay previous move or move forward from previous moves. All these options are provided in main game window. At the end of the game you can evaluate your moves. You can see the moves played on the right side of the game window. Best moves and suggestions are shown at top right corner.'''
+
+    def __init__(self, lang):
+
+        if lang == "English":
+            Strings.str_hindi = "Hindi"
+            Strings.str_english = "English"
+            Strings.str_play_against = "Play Against"
+            Strings.str_chess_type = "Chess Type"
+            Strings.str_chess_type_sc = "Standard Chess"
+            Strings.str_chess_type_nc = "No Castle"
+            Strings.str_chess_type_c960 = "Chess 960"
+            Strings.str_first_players_name = "First Player's Name"
+            Strings.str_second_players_name = "Second Player's Name"
+            Strings.str_difficulty = "Difficulty"
+            Strings.str_difficulty_easy = "Easy"
+            Strings.str_difficulty_medium = "Medium"
+            Strings.str_difficulty_hard = "Hard"
+            Strings.str_ai_color = "AI color"
+            Strings.str_ai_color_black = "Black"
+            Strings.str_ai_color_white = "White"
+            Strings.str_settings = "Settings"
+            Strings.str_play_the_game = "Play the game"
+            Strings.str_continue_last_game = "Continue last game"
+            Strings.str_themes = "Themes"
+            Strings.str_themes_orange = "Orange"
+            Strings.str_themes_classic = "Classic"
+            Strings.str_info = "info"
+            Strings.str_info_content = '''          There are six types of chess pieces. They are the pawn, the knight, the bishop,the rook, the queen, and the king. Pawns move up the board one square unless it's the first time they're moving when they may move two squares. Note that they cannot move backward.The pawn captures pieces one square diagonally and is the only chess piece that captures differently than the way it moves. It is also the only piece that can capture using the special en passant rule.The knight moves two squares horizontally and one vertically, or two squares vertically and one horizontally. The way the knight moves resembles the upper-case "L." The bishop can move any number of squares diagonally.The rook can move any number of squares vertically or horizontally.The queen is the most powerful piece on the board.It can move diagonally, horizontally, or vertically as many squares as it wants (unless another piece blocks it).The king can move one square in every direction.Also, the king can make use of the special castling rule together with a rook. 
+          You can choose to play against another human or against the built in AI/ bot. If you select AI, difficulty of the bot, and color of the bot's pieces can also be selected. Langaugge of the interface can be selected. All these options are provided in the main menu.In settings menu you can set volume of the game and theme of the game window. You can also access settings in game window. You can choose to play against AI at any point in time in the game if you are already playing against human. You can replay previous move or move forward from previous moves. All these options are provided in main game window. At the end of the game you can evaluate your moves. You can see the moves played on the right side of the game window. Best moves and suggestions are shown at top right corner.'''
+
+        elif lang == "Hindi":
+            self.font = "Assets/Shiv02.ttf"
+            self.fontBold = "Assets/Shiv02.ttf"
+            self.hindi_font = pygame.font.Font(self.font, 32)
+            # translator = Translator()
+            Strings.str_hindi = "ihndI"
+            # Strings.str_hindi = translator.translate('Hindi', src='en', dest='hi')
+            Strings.str_english = "AMga`ojaI"
+            Strings.str_play_against = "ko iva$Qa Kolao"
+            Strings.str_chess_type = "SatrMja ka p`kar"
+            Strings.str_chess_type_sc = "maanak SatrMja"
+            Strings.str_chess_type_nc = "ibanaa ka^sala"
+            Strings.str_chess_type_c960 = "SatrMja 960"
+            Strings.str_first_players_name = "phlao iKlaaDI ka naama"
+            Strings.str_second_players_name = "dusaro iKlaaDI ka naama"
+            Strings.str_difficulty = "kiznaaš"
+            Strings.str_difficulty_easy = "Aasaana"
+            Strings.str_difficulty_medium = "maQyama"
+            Strings.str_difficulty_hard = "kizna"
+            Strings.str_ai_color = "eAaš ka rMga"
+            Strings.str_ai_color_black = "kalaa"
+            Strings.str_ai_color_white = "safod"
+            Strings.str_settings = "samaayaaojana"
+            Strings.str_play_the_game = "Kola Kolao"
+            Strings.str_continue_last_game = "ipClaa Kola Kolao"
+            Strings.str_themes = "ivaYaya"
+            Strings.str_themes_orange = "naarMgaI"
+            Strings.str_themes_classic = "@laaisak"
+            Strings.str_info = "jaanakarI"
+            Strings.str_info_content = '''          Kola mao 6 p`kar ko maaohro haoto hOM. vah Pyaada rajaa ranaI }^MT haqaI GaaoDa ko naama sao jaanao jaato hOM. Pyaada 1 caala calata hO laoikna phlaI baar ihlanao pr 2 caala BaI cala sa@ta hO. Qyaana doM ik vao ipcCo kI Aaor nahI jaa sa@to.maaohra itrCo 1 vaga- ko maaohro kao Ka sa@ta hOM AaOr SatrMja ka ekmaa~ maaohra hO jaao Apnao calanao ko ZMga sao Alaga calata hO. vah ekmaa~ esaa maaohra hO jaao ek ivaSaoYa caala ena pasaoMT Kola sa@ta hOM. GaaoDa Zaš kdma kI caala Kolata hO. }^MT itrCo idSao mao iksaI BaI saM#yaa mao caala cala sa@ta hOM. haqaI iksaI BaI saM#yaa maO ]pr inacao Aqavaa dae baae cala sa@ta hOM. ranaI Kola kI sabsao takdvar maaohra haotI hOM. vao ]pr inacao dae baae Aqavaa itrCI iksaI BaI saM#yaa mao cala sa@tI hOM. rajaa iksaI BaI idSaa mao ek caala cala sa@ta hOM. rajaa haqaI kI madd sao ek ivaSaoYa caala ka^sala cala sa@ta hO.
+          Aap caaho tao Kola mao maaOjaud eAaš ka AanaMd lao sa@to hOM. Saaqa hI eAaš kI kiznaaš AaOr ]saka rMga BaI caunaa jaa sa@ta hOM. Kola kI BaaYaa caunaI jaa sa@tI hOM. samaayaaojana mao Kola ka Aavaaja badlaa jaa sa@to hOM AaOr iqama BaI saoT ik jaa sai@t hOM. Agar Aap [nasaana ko saaqa Kola rho hao tao Kola ko daorana iksaI BaI samaya pr eAa[- ko saaqa Kola jaarI rK sa@to hOM. Aap ipClaI caala kao ifr sao Kola sa@to hO yaa ipClaI caala sao Aagao BaI baZ sa@to hOM. Kola Ktma haonao pr Aap Apnao Kola ka ivaSalaoYana doK sa@to hO. Kolao ga[- caalao da[- AaOr doKI jaa sa@tI hOM. savaao-%tma caalao AaOr sauJaava da[- trf ]pr idKa[- jaatI hOM.'''
 
 
 # noinspection PyUnboundLocalVariable,PyArgumentList
@@ -25,7 +112,7 @@ class info_dialogue:
         self.close_img = pygame.transform.scale(self.close_img, (40, 40))
         self.title = title
         self.font = pygame.font.Font(Menu.product_sans_path, 25)
-        self.text_surf = self.font.render(self.title, True, (253, 246, 227))
+        self.text_surf = Menu.font.render(self.title, True, (253, 246, 227))
         self.text_rect = self.text_surf.get_rect(center=(self.pos[0] + 750, self.pos[1] + 20))
         self.dia_type = dia_type
         self.mute_img = pygame.image.load(IMG_PATH + "mute.png")
@@ -61,34 +148,14 @@ class info_dialogue:
         self.check_click()
 
     def display_info(self):
-        string = '''Chess is a board game played between two players that simulates a war between two kingdoms. Chess 
-        is a turn-based strategy game with no hidden information.There are six types of chess pieces. They are the 
-        pawn, the knight, the bishop,the rook, the queen, and the king. Each of those pieces moves differently and 
-        has a distinct value.Pawns move up the board one square unless it's the first time they're moving when they 
-        may move two squares. Note that they cannot move backward.The pawn captures pieces one square diagonally and 
-        is the only chess piece that captures differently than the way it moves. It is also the only piece that can 
-        capture using the special en passant rule.The knight moves two squares horizontally and one vertically, 
-        or two squares vertically and one horizontally. The way the knight moves resembles the upper-case "L." The 
-        bishop can move any number of squares diagonally.The rook can move any number of squares vertically or 
-        horizontally.The queen is the most powerful piece on the board.It can move diagonally, horizontally, 
-        or vertically as many squares as it wants (unless another piece blocks it).The king can move one square in 
-        every direction.Also, the king can make use of the special castling rule together with a rook. 
-
-                You can choose to play against another human or against the built in AI/ bot. If you select AI, 
-                difficulty of the bot, and color of the bot's pieces can also be selected. Langaugge of the interface 
-                can be selected. All these options are provided in the main menu.In settings menu you can set volume 
-                of the game and theme of the game window. You can also access settings in game window. You can choose 
-                to play against AI at any point in time in the game if you are already playing against human. You can 
-                replay previous move or move forward from previous moves. All these options are provided in main game 
-                window. At the end of the game you can evaluate your moves. You can see the moves played on the right 
-                side of the game window. Best moves and suggestions are shown at top right corner. '''
+        string = Menu.s.str_info_content
         x, y = self.pos[0] + 15, self.pos[1] + 50
         words = [word.split(' ') for word in string.splitlines()]
         space = self.font.size(' ')[0]  # width of space
         max_width, max_height = self.dim
         for line in words:
             for word in line:
-                word_surface = self.font.render(word, True, (70, 70, 70))
+                word_surface = Menu.ui_font.render(word, True, (70, 70, 70))
                 word_width, word_height = word_surface.get_size()
                 if x + word_width >= max_width:
                     x = self.pos[0] + 15  # reset x
@@ -120,7 +187,7 @@ class DialogueBox:
         self.close_img = pygame.transform.scale(self.close_img, (40, 40))
         self.title = title
         self.font = pygame.font.Font(Menu.product_sans_path, 25)
-        self.text_surf = self.font.render(self.title, True, (253, 246, 227))
+        self.text_surf = Menu.ui_font.render(self.title, True, (253, 246, 227))
         self.text_rect = self.text_surf.get_rect(center=(self.pos[0] + 190, self.pos[1] + 20))
         self.dia_type = dia_type
         self.mute_img = pygame.image.load(IMG_PATH + "mute.png")
@@ -141,8 +208,8 @@ class DialogueBox:
         self.volume = volume
 
         self.theme_selector = settings_Selector(self.screen, (self.pos[0] + self.dim[0] + -275, self.pos[1] + 180),
-                                                (860, 500), (420, 500), "--Themes--",
-                                                ['Classic', 'Orange'])
+                                                (860, 500), (420, 500), Menu.s.str_themes,
+                                                [Menu.s.str_themes_classic, Menu.s.str_themes_orange])
 
     def rects(self):
         pygame.draw.rect(self.screen, self.color, (self.pos[0], self.pos[1], self.dim[0], self.dim[1] - 145),
@@ -245,7 +312,7 @@ class Edittext:
         else:
             bCol = self.focusedColor
 
-        text_surf = self.font.render(self.title, True, (253, 246, 227))
+        text_surf = Menu.font.render(self.title, True, (253, 246, 227))
         self.window.blit(text_surf, (self.title_pos[0], self.title_pos[1]))
         # Draw the outer rect here
         pygame.draw.rect(self.window, bCol, (self.x, self.y, self.W, self.H), self.borderfill,
@@ -335,7 +402,7 @@ class Edittext:
 # noinspection PyArgumentList
 class Button:
 
-    def __init__(self, screen, text, width, height, pos, elevation, Type):
+    def __init__(self, screen, text, width, height, pos, elevation, Type, font):
         self.gui_font = pygame.font.Font(None, 30)
         self.screen = screen
         self.type = Type
@@ -354,7 +421,7 @@ class Button:
         self.bottom_color = '#BFC0C2'  # '#354B5E'
 
         # text
-        self.text_surf = self.gui_font.render(text, True, '#FFFFFF')
+        self.text_surf = font.render(text, True, '#FFFFFF')
         self.text_rect = self.text_surf.get_rect(center=self.top_rect.center)
 
     def draw(self):
@@ -444,7 +511,7 @@ class settings_Selector:
         self.selector_title = selector_title
         self.next_btn_pos = next_btn_pos
         self.title_pos = title_pos
-        self.text_surf = self.font.render(self.selector_title, True, (70, 70, 70))
+        self.text_surf = Menu.ui_font.render(self.selector_title, True, (70, 70, 70))
         self.prev_img = pygame.image.load(IMG_PATH + "left-arrow.png")
         self.next_img = pygame.image.load(IMG_PATH + "right-arrow.png")
         self.prev_img = pygame.transform.scale(self.prev_img, (30, 30))
@@ -457,7 +524,7 @@ class settings_Selector:
     def draw(self):
         self.screen.blit(self.text_surf, (self.title_pos[0], self.title_pos[1]))
         self.screen.blit(self.prev_img, self.prev_rect)
-        option = self.font.render(self.options[self.i], True, (70, 70, 70))
+        option = Menu.ui_font.render(self.options[self.i], True, (70, 70, 70))
         # self.screen.blit(option, option.get_rect(center=(970, 325)))
         # self.screen.blit(option, option.get_rect(center=(self.options_pos[0], self.options_pos[1])))
         self.screen.blit(option, option.get_rect(center=(self.title_pos[0] + 75, self.title_pos[1] + 60)))
@@ -505,7 +572,7 @@ class Selector:
         self.selector_title = selector_title
         self.next_btn_pos = next_btn_pos
         self.title_pos = title_pos
-        self.text_surf = self.font.render(self.selector_title, True, (253, 246, 227))
+        self.text_surf = Menu.font.render(self.selector_title, True, (253, 246, 227))
         self.prev_img = pygame.image.load(IMG_PATH + "left-arrow.png")
         self.next_img = pygame.image.load(IMG_PATH + "right-arrow.png")
         self.prev_img = pygame.transform.scale(self.prev_img, (50, 50))
@@ -521,7 +588,7 @@ class Selector:
     def draw(self):
         self.screen.blit(self.text_surf, (self.title_pos[0], self.title_pos[1]))
         self.screen.blit(self.prev_img, self.prev_rect)
-        option = self.font.render(self.options[self.i], True, (253, 246, 227))
+        option = Menu.font.render(self.options[self.i], True, (253, 246, 227))
         # self.screen.blit(option, option.get_rect(center=(970, 325)))
         self.screen.blit(option, option.get_rect(center=(self.options_pos[0], self.options_pos[1])))
         self.screen.blit(self.next_img, self.next_rect)
@@ -554,6 +621,10 @@ def get_mouse_pos():
 
 
 class Menu:
+    s = Strings("English")
+    ui_font = pygame.font.Font(None, 30)
+    font = pygame.font.Font(gameFont, 40)
+
     path = 'D://Python-Projects//pygame_menus//'
     product_sans_path = gameFont
     continue_last_game = False
@@ -700,32 +771,33 @@ class Menu:
     def main(self):
         # player1_name = Input(self.screen, self.width*4/10 - self.width*1/150, self.width*2.7/20)
         # player2_name = Input(self.screen, 600, 225)
-        button1 = Button(self.screen, 'Play the game', 220, 60, (self.width / 2 - 95, self.height - 150), 4,
-                         "play-new-game")
-        button2 = Button(self.screen, 'Continue last game', 220, 60, (self.width / 2 + 200, self.height - 150), 4,
-                         'continue-last-game')
-        button3 = Button(self.screen, 'Settings', 220, 60, (self.width / 2 - 397, self.height - 150), 4, 'settings')
-        chess_type_selector = Selector(self.screen, (550, 300), (970, 325), (600, 328), "Chess Type",
-                                       ['Standard Chess', 'Chess 960', 'No '
-                                                                       'Castle'])
-        difficulty_selector = Selector(self.screen, (550, 475), (860, 500), (420, 500), "Difficulty",
-                                       ['Easy', 'Medium', 'Hard'])
+        button1 = Button(self.screen, Menu.s.str_play_the_game, 220, 60, (self.width / 2 - 95, self.height - 150), 4,
+                         "play-new-game", Menu.ui_font)
+        button2 = Button(self.screen, Menu.s.str_continue_last_game, 220, 60,
+                         (self.width / 2 + 200, self.height - 150), 4, 'continue-last-game', Menu.ui_font)
+        button3 = Button(self.screen, Menu.s.str_settings, 220, 60, (self.width / 2 - 397, self.height - 150), 4,
+                         'settings', Menu.ui_font)
+        chess_type_selector = Selector(self.screen, (550, 300), (970, 325), (600, 328), Menu.s.str_chess_type,
+                                       [Menu.s.str_chess_type_sc, Menu.s.str_chess_type_c960, Menu.s.str_chess_type_nc])
+        difficulty_selector = Selector(self.screen, (550, 475), (860, 500), (420, 500), Menu.s.str_difficulty,
+                                       [Menu.s.str_difficulty_easy, Menu.s.str_difficulty_medium,
+                                        Menu.s.str_difficulty_hard])
 
         first_player_name = Edittext(self.screen, 900, 389, 'Player1', 50, 250, borderFill=3,
-                                     title="First Player's Name",
+                                     title=Menu.s.str_first_players_name,
                                      title_pos=(550, 390))
         second_player_name = Edittext(self.screen, 950, 475, 'Player2', 50, 250, borderFill=3,
-                                      title="Second Player's Name",
+                                      title=Menu.s.str_second_players_name,
                                       title_pos=(550, 475))
 
-        settings_win = DialogueBox(self.screen, (28, 200), (400, 500), (70, 70, 70), (70, 70, 70), "Settings",
+        settings_win = DialogueBox(self.screen, (28, 200), (400, 500), (70, 70, 70), (70, 70, 70), Menu.s.str_settings,
                                    dia_type='settings', volume=Menu.volume)
-        btn_info = Button(self.screen, 'info', 110, 50, (self.width - 150, 75), 4,
-                          'info')
+        btn_info = Button(self.screen, Menu.s.str_info, 110, 50, (self.width - 150, 75), 4,
+                          'info', Menu.ui_font)
         info_win = info_dialogue(self.screen, (self.width - 1510, 190), (1475, 680), (70, 70, 70), (70, 70, 70),
-                                 "Information", dia_type='info')
-        ai_color_selector = Selector(self.screen, (550, 565), (830, 592), (390, 593), "AI color",
-                                     ['Black', 'White'])
+                                 Menu.s.str_info, dia_type='info')
+        ai_color_selector = Selector(self.screen, (550, 565), (830, 592), (390, 593), Menu.s.str_ai_color,
+                                     [Menu.s.str_ai_color_black, Menu.s.str_ai_color_white])
 
         global running, CHANGE_ACTIVITY
         while running and not CHANGE_ACTIVITY:
@@ -755,10 +827,18 @@ class Menu:
                         if hindi_img_rect.collidepoint(x, y):
                             self.ui_lang = "hindi"
                             Menu.var_ui_language = self.ui_lang
+                            Menu.s = Strings("Hindi")
+                            Menu.ui_font = pygame.font.Font('Assets/Shiv02.ttf', 30)
+                            Menu.font = pygame.font.Font('Assets/Shiv02.ttf', 40)
+                            Menu.main(self)
                             # print("hindi")
                         if english_img_rect.collidepoint(x, y):
                             self.ui_lang = "eng"
                             Menu.var_ui_language = self.ui_lang
+                            Menu.s = Strings("English")
+                            Menu.ui_font = pygame.font.Font(None, 30)
+                            Menu.font = pygame.font.Font(gameFont, 40)
+                            Menu.main(self)
                             # print("english")
 
                     first_player_name.eventHandler(ev)
@@ -788,7 +868,7 @@ class Menu:
                 if self.ui_lang == "hindi":
                     pygame.draw.rect(self.screen, (255, 255, 255), hindi_img_rect, 3)
 
-                decision_title = self.font.render("Play Against", True, (253, 246, 227))
+                decision_title = Menu.font.render(Menu.s.str_play_against, True, (253, 246, 227))
                 x, y = self.width / 2, self.height / 2 - 200
                 text_rect = decision_title.get_rect(center=(x, y))
                 image_rect1 = self.play_against_human_img.get_rect(center=(x - 175, y))
@@ -839,17 +919,17 @@ class Menu:
         if CHANGE_ACTIVITY:
 
             chess_type = 'STANDARD'
-            if Menu.var_chess_type == "Chess 960":
+            if Menu.var_chess_type == Strings.str_chess_type_c960:
                 chess_type = 'CHESS_960'
-            if Menu.var_chess_type == "No Castle":
+            if Menu.var_chess_type == Strings.str_chess_type_nc:
                 chess_type = 'STANDARD_NON_CASTLE'
 
             vsAI = None  # Difficulty
-            if Menu.var_ai_difficulty == "Easy":
+            if Menu.var_ai_difficulty == Strings.str_difficulty_easy:
                 vsAI = 'EASY'
-            if Menu.var_ai_difficulty == "Medium":
+            if Menu.var_ai_difficulty == Strings.str_difficulty_medium:
                 vsAI = 'MEDIUM'
-            if Menu.var_ai_difficulty == "Hard":
+            if Menu.var_ai_difficulty == Strings.str_difficulty_hard:
                 vsAI = 'HARD'
 
             p1Name = None
@@ -861,14 +941,14 @@ class Menu:
                 p2Name = Menu.var_second_players_name.strip().capitalize()
 
             theme = 'DEFAULT'
-            if Menu.theme_selected == 'Orange':
+            if Menu.theme_selected == Strings.str_themes_orange:
                 theme = 'ORANGE'
 
             volume = Menu.volume
 
             continueLastGame = CHANGE_ACTIVITY == 2
 
-            if Menu.var_ai_color == 'White':
+            if Menu.var_ai_color == Strings.str_ai_color_white:
                 aiColor = CHESS_WHITE
             else:
                 aiColor = CHESS_BLACK
@@ -881,5 +961,4 @@ class Menu:
             if Menu.var_ui_language == 'hindi':
                 language = 'HINDI'
 
-            playGame = Play()
-            playGame.start(vsAI, aiColor, theme, language, volume, chess_type, p1Name, p2Name, continueLastGame)
+            return [vsAI, aiColor, theme, language, volume, chess_type, p1Name, p2Name, continueLastGame]
