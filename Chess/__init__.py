@@ -937,7 +937,7 @@ class chessBoard:
         if self.is_check(self.BlackKing.row, self.BlackKing.col):
             bScore = bScore * 0.8
         if self.is_checkmate():
-            if self.turn:
+            if not self.turn:
                 wScore, bScore = 1, 0
             else:
                 wScore, bScore = 0, 1
@@ -1000,37 +1000,6 @@ class chessBoard:
     def evaluate_advantage(self, color=CHESS_WHITE):
         # score = 0
         wScore, bScore = self.get_score()
-        """
-        is_check_Mate, is_stale_mate, is_draw_re = self.is_checkmate(), self.draw_by_stalemate(),
-        self.draw_by_threefold_repetition()
-        # Checkmate
-        if color == CHESS_WHITE:
-            if self.turn and is_check_Mate:
-                score -= 100
-            if not self.turn and is_check_Mate:
-                score += 100
-        else:
-            if self.turn and is_check_Mate:
-                score += 100
-            if not self.turn and is_check_Mate:
-                score -= 100
-
-        # Stalemate
-        if color == CHESS_WHITE:
-            if self.turn and (is_stale_mate or is_draw_re) and wScore >= bScore:
-                score -= 100
-            if not self.turn and (is_stale_mate or is_draw_re) and wScore < bScore:
-                score += 100
-        else:
-            if self.turn and (is_stale_mate or is_draw_re) and wScore > bScore:
-                score += 100
-            if not self.turn and (is_stale_mate or is_draw_re) and wScore <= bScore:
-                score -= 100
-        # wMoves = len(self.get_all_valid_moves(CHESS_WHITE))
-        # bMoves = len(self.get_all_valid_moves(CHESS_BLACK))
-
-        # Space adv.
-        # Checkmate / Stalemate / Draw /check is okay but you should not lose piece"""
         if color == CHESS_WHITE:
             return wScore - bScore
         return bScore - wScore

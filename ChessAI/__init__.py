@@ -40,6 +40,25 @@ class AI(threading.Thread):
             moveList = board.get_all_valid_moves(aiColor)
             random.shuffle(moveList)
 
+            if len(moveList) == 0:
+                board.evaluate_player_advantage()
+                w, b = board.p1_adv, board.p2_adv
+                isCM, isSM = board.is_checkmate(), board.draw_by_stalemate()
+                if oppoColor == CHESS_BLACK:
+                    if w > b:
+                        if isCM:
+                            maxEval = float('inf')
+                    else:
+                        if isSM:
+                            maxEval = float('inf')
+                else:
+                    if b > w:
+                        if isCM:
+                            maxEval = float('inf')
+                    else:
+                        if isSM:
+                            maxEval = float('inf')
+
             for mv in moveList:
                 board.move(mv, debug=True)
                 evaluation, bstMoveTillNow = self.minimax(depth-1, oppoColor, alpha, beta)
@@ -61,6 +80,25 @@ class AI(threading.Thread):
             best_move = None
             moveList = board.get_all_valid_moves(aiColor)
             random.shuffle(moveList)
+
+            if len(moveList) == 0:
+                board.evaluate_player_advantage()
+                w, b = board.p1_adv, board.p2_adv
+                isCM, isSM = board.is_checkmate(), board.draw_by_stalemate()
+                if oppoColor == CHESS_BLACK:
+                    if w > b:
+                        if isCM:
+                            minEval = float('-inf')
+                    else:
+                        if isSM:
+                            minEval = float('-inf')
+                else:
+                    if b > w:
+                        if isCM:
+                            minEval = float('-inf')
+                    else:
+                        if isSM:
+                            minEval = float('-inf')
 
             for mv in moveList:
                 board.move(mv, debug=True)
